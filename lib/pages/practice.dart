@@ -12,6 +12,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  int _termsLeft = 13;
+
   void _startReviewing() {
     // TODO
   }
@@ -38,7 +40,7 @@ class _HomeState extends State<Home> {
                         TextStyle(fontSize: 46, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 25),
                 ReviewBubble(
-                  terms: 13,
+                  terms: _termsLeft,
                   onPress: _startReviewing,
                 ),
                 const SizedBox(height: 25),
@@ -50,17 +52,21 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const ModeButton(
-                    iconData: Icons.info,
-                    bkgIconColor: ThemeColors.red,
-                    name: "Free Play",
-                    tag: "Practice Anything"),
+                ModeButton(
+                  iconData: Icons.info,
+                  bkgIconColor: ThemeColors.red,
+                  name: "Free Play",
+                  tag: "Practice Anything",
+                  onPress: _startReviewing,
+                ),
                 const SizedBox(height: 10),
-                const ModeButton(
-                    iconData: Icons.fire_extinguisher,
-                    bkgIconColor: ThemeColors.blue,
-                    name: "Challenge",
-                    tag: "Go For Streaks"),
+                ModeButton(
+                  iconData: Icons.fire_extinguisher,
+                  bkgIconColor: ThemeColors.blue,
+                  name: "Challenge",
+                  tag: "Go For Streaks",
+                  onPress: _startReviewing,
+                ),
                 const SizedBox(height: 25),
               ],
             ),

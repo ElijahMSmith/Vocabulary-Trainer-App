@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 
 class ModeButton extends StatelessWidget {
@@ -7,8 +8,9 @@ class ModeButton extends StatelessWidget {
   final Color bkgIconColor;
   final String name;
   final String tag;
+  final Logger logger = Logger();
 
-  const ModeButton(
+  ModeButton(
       {super.key,
       required this.iconData,
       required this.name,
@@ -19,20 +21,27 @@ class ModeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 100,
-        decoration: BoxDecoration(
-          color: ThemeColors.primary,
-          borderRadius: const BorderRadius.all(Radius.circular(30)),
-          boxShadow: [
-            BoxShadow(
-                blurRadius: 4,
-                offset: const Offset(0, 4),
-                color: Colors.black.withOpacity(.2))
-          ],
-        ),
-        child: GestureDetector(
-            onTap: onPress,
-            child: Row(children: [
+      height: 100,
+      decoration: BoxDecoration(
+        color: ThemeColors.primary,
+        // color: Colors.transparent,
+        borderRadius: const BorderRadius.all(Radius.circular(30)),
+        boxShadow: [
+          BoxShadow(
+              blurRadius: 4,
+              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(.2))
+        ],
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: Material(
+        // color: ThemeColors.primary,
+        color: Colors.transparent,
+        // borderRadius: BorderRadius.all(Radius.circular(30)),
+        child: InkWell(
+          onTap: onPress,
+          child: Row(
+            children: [
               Container(
                 margin: const EdgeInsets.fromLTRB(25, 0, 15, 0),
                 padding: const EdgeInsets.all(10),
@@ -56,22 +65,27 @@ class ModeButton extends StatelessWidget {
                     )),
               ),
               Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      tag,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w300),
-                    ),
-                  ])
-            ])));
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    tag,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w300),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

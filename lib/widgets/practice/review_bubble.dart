@@ -35,9 +35,15 @@ class ReviewBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: ThemeColors.secondary,
-        borderRadius: BorderRadius.all(Radius.circular(30)),
+        borderRadius: const BorderRadius.all(Radius.circular(30)),
+        boxShadow: [
+          BoxShadow(
+              blurRadius: 4,
+              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(.2))
+        ],
       ),
       padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 30),
       child: Column(
@@ -69,10 +75,10 @@ class ReviewBubble extends StatelessWidget {
                     terms > 0
                         ? buildReviewButton()
                         : const Text(
-                            "Check Back Tomorrow!",
+                            "See You Tomorrow!",
                             style: TextStyle(
                                 fontSize: 18,
-                                fontWeight: FontWeight.w300,
+                                fontWeight: FontWeight.w400,
                                 color: Colors.white),
                           ),
                   ],
