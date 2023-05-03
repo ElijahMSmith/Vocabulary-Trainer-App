@@ -1,33 +1,21 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 
-class TermInputCard extends StatefulWidget {
+class TermInputCard extends StatelessWidget {
+  final HintOption hintOption;
+
   final void Function(int) onDelete;
+  final void Function() afterUpdate;
   final Term _data;
 
-  const TermInputCard(this._data, {required this.onDelete, required super.key});
-
-  int getID() {
-    return _data.id;
-  }
-
-  @override
-  State<TermInputCard> createState() => _TermInputCardState();
-}
-
-class _TermInputCardState extends State<TermInputCard> {
-  late final Term _data;
-  final HintOption _randomHint =
-      allHints.elementAt(Random().nextInt(allHints.length));
-
-  @override
-  void initState() {
-    super.initState();
-    _data = widget._data;
-  }
+  const TermInputCard(
+    this._data, {
+    required this.onDelete,
+    required this.afterUpdate,
+    required this.hintOption,
+    required super.key,
+  });
 
   Widget buildInputLine(
       {required String current,
@@ -43,7 +31,7 @@ class _TermInputCardState extends State<TermInputCard> {
             onChanged: onChangeItem,
             decoration: InputDecoration(
               hintText:
-                  label == "Term" ? _randomHint.term : _randomHint.definition,
+                  label == "Term" ? hintOption.term : hintOption.definition,
               hintStyle: TextStyle(
                   color: ThemeColors.black.withOpacity(.4),
                   fontSize: 18,
@@ -110,14 +98,13 @@ class _TermInputCardState extends State<TermInputCard> {
                     label: "Term",
                     language: _data.term.language,
                     onChangeItem: (newText) {
-                      setState(() {
-                        _data.term.item = newText;
-                      });
+                      _data.term.item = newText;
+                      afterUpdate();
+                      // This seems bad but the best I can think of right now
                     },
                     onChangeLanguage: (newLanguage) {
-                      setState(() {
-                        _data.term.language = newLanguage;
-                      });
+                      _data.term.language = newLanguage;
+                      afterUpdate();
                     },
                   ),
                   buildInputLine(
@@ -125,14 +112,12 @@ class _TermInputCardState extends State<TermInputCard> {
                     label: "Definition",
                     language: _data.definition.language,
                     onChangeItem: (newText) {
-                      setState(() {
-                        _data.definition.item = newText;
-                      });
+                      _data.definition.item = newText;
+                      afterUpdate();
                     },
                     onChangeLanguage: (newLanguage) {
-                      setState(() {
-                        _data.definition.language = newLanguage;
-                      });
+                      _data.definition.language = newLanguage;
+                      afterUpdate();
                     },
                   ),
                 ],
@@ -146,7 +131,7 @@ class _TermInputCardState extends State<TermInputCard> {
             ),
             margin: const EdgeInsets.only(left: 25, right: 25),
             child: IconButton(
-              onPressed: () => widget.onDelete(_data.id),
+              onPressed: () => onDelete(_data.id),
               icon: const Icon(
                 Icons.delete_outline,
                 size: 30,

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
@@ -14,33 +16,69 @@ class Enter extends StatefulWidget {
 }
 
 class _EnterState extends State<Enter> {
-  final List<TermInputCard> _allTerms = [];
+  final List<Term> _allTerms = [];
+  final List<HintOption> _hints = [];
+
+  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
+
   Logger logger = Logger();
 
-  void _handleSubmit() {/*TODO*/}
+  void _handleSubmit() {
+    for (var thisTerm in _allTerms) {
+      logger.i(thisTerm);
+    }
+  }
+
   void _deleteTerm(int id) {
     for (var i = 0; i < _allTerms.length; i++) {
-      TermInputCard thisTerm = _allTerms[i];
-      if (thisTerm.getID() == id) {
-        setState(() => _allTerms.removeAt(i));
+      Term thisTerm = _allTerms[i];
+      if (thisTerm.id == id) {
+        listKey.currentState?.removeItem(
+          i,
+          (context, animation) => slidingItem(context, i, animation),
+          duration: const Duration(milliseconds: 500),
+        );
+        setState(() {
+          _allTerms.removeAt(i);
+          _hints.removeAt(i);
+        });
         break;
       }
     }
   }
 
   void _createTerm() {
-    Term newTerm = Term.blank();
-    TermInputCard newCard = TermInputCard(
-      newTerm,
-      onDelete: _deleteTerm,
-      key: Key(newTerm.id.toString()),
+    listKey.currentState?.insertItem(
+      0,
+      duration: const Duration(milliseconds: 500),
     );
-    setState(() => _allTerms.add(newCard));
+    setState(() {
+      _allTerms.insert(0, Term.blank());
+      _hints.insert(0, allHints.elementAt(Random().nextInt(allHints.length)));
+    });
   }
 
-  /*
-  - TODO: How to get state out when saving everything?
-  */
+  void _updateState() {
+    setState(() {});
+  }
+
+  Widget slidingItem(BuildContext context, int i, Animation<double> animation) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(-1, 0),
+        end: const Offset(0, 0),
+      ).animate(animation),
+      child: TermInputCard(
+        // TODO: This is throwing range error (valid value range is empty: 0) when deleting last card
+        // TODO: Animate cards shifting up and down as well (maybe a different Tween)
+        _allTerms[i],
+        onDelete: _deleteTerm,
+        afterUpdate: _updateState,
+        hintOption: _hints[i],
+        key: Key(_allTerms[i].id.toString()),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,17 +94,31 @@ class _EnterState extends State<Enter> {
           onPressed: _handleSubmit,
         ),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ..._allTerms,
-              const SizedBox(height: 20),
-              AddButton(onPressed: _createTerm, text: "New Term"),
-            ],
-          ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // for (var i = 0; i < _allTerms.length; i++)
+            //   TermInputCard(
+            //     _allTerms[i],
+            //     onDelete: _deleteTerm,
+            //     afterUpdate: _updateState,
+            //     hintOption: _hints[i],
+            //     key: Key(_allTerms[i].id.toString()),
+            //   ),
+            AnimatedList(
+              key: listKey,
+              initialItemCount: 0,
+              itemBuilder: (context, index, animation) {
+                return slidingItem(context, index, animation);
+              },
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+            ),
+            const SizedBox(height: 20),
+            AddButton(onPressed: _createTerm, text: "New Term"),
+          ],
         ),
       ),
       backgroundColor: ThemeColors.accent,

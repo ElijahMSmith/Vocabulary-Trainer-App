@@ -38,6 +38,11 @@ class Term {
     // Similarly, start from years and check difference
     return "TODO";
   }
+
+  @override
+  String toString() {
+    return "${term.item} (${term.language}) - ${definition.item} (${definition.language})";
+  }
 }
 
 class TermItem {
