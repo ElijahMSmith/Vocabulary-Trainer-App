@@ -37,13 +37,28 @@ class Framework extends StatefulWidget {
 }
 
 class _FrameworkState extends State<Framework> {
-  static const _screens = [Enter(), Home(), Search(), Settings()];
+  static const _allPages = [Enter(), Home(), Search(), Settings()];
 
+  PageController? _pageController;
   int _pageIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _pageIndex, keepPage: true);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController!.dispose();
+  }
 
   void _handleTap(int index) {
     setState(() {
       _pageIndex = index;
+      _pageController!.animateToPage(index,
+          duration: const Duration(milliseconds: 350), curve: Curves.easeOut);
     });
   }
 
@@ -64,7 +79,14 @@ class _FrameworkState extends State<Framework> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ThemeColors.accent,
-      body: _screens.elementAt(_pageIndex),
+      body: SizedBox.expand(
+        child: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() => _pageIndex = index);
+            },
+            children: _allPages),
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
