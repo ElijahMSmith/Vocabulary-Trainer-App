@@ -1,5 +1,5 @@
 class Term {
-  static int ID_COUNTER = 0;
+  static int ID_COUNTER = 0; /* TODO: Go to a better system */
 
   late int id;
 
@@ -42,7 +42,7 @@ class Term {
 
 class TermItem {
   String item = "";
-  String language = "";
+  String language = "English";
 
   TermItem(this.item, this.language);
 
@@ -64,3 +64,25 @@ class TermItem {
     return false;
   }
 }
+
+class HintOption {
+  final String term;
+  final String definition;
+
+  const HintOption({required this.term, required this.definition});
+}
+
+final List<HintOption> allHints = [
+  const HintOption(term: "你好", definition: "Hello!"),
+  const HintOption(term: "Bonjour", definition: "Hello!"),
+  const HintOption(term: "Hola", definition: "Hello!"),
+  const HintOption(term: "Përshëndetje", definition: "Hello!"),
+  const HintOption(term: "Halló", definition: "Hello!"),
+  const HintOption(term: "こんにちは", definition: "Hello!"),
+  const HintOption(term: "안녕하세요", definition: "Hello!"),
+  const HintOption(term: "สวัสดี", definition: "Hello!"),
+  const HintOption(term: "Merhaba", definition: "Hello!"),
+  const HintOption(term: "Γειά σου", definition: "Hello!"),
+  const HintOption(term: "Hej", definition: "Hello!"),
+  const HintOption(term: "ສະບາຍດີ", definition: "Hello!"),
+];

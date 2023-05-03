@@ -44,7 +44,6 @@ class _EnterState extends State<Enter> {
 
   @override
   Widget build(BuildContext context) {
-    logger.i("${_allTerms.length} term cards");
     return Scaffold(
       appBar: ThemedAppBar(
         "Add New Vocabulary",
@@ -64,6 +63,7 @@ class _EnterState extends State<Enter> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               ..._allTerms,
+              const SizedBox(height: 20),
               AddButton(onPressed: _createTerm, text: "New Term"),
             ],
           ),
