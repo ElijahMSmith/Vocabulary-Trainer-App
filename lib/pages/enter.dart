@@ -32,7 +32,8 @@ class _EnterState extends State<Enter> {
 
   void _handleSubmit() {
     for (var thisTerm in _allTerms) {
-      logger.i(thisTerm.term);
+      // This logs all the data on the cards correctly too - even though the cards are blank, their data is present
+      logger.i(thisTerm);
     }
   }
 
@@ -51,10 +52,6 @@ class _EnterState extends State<Enter> {
     }
   }
 
-  // TODO: When I delete a term, the terms below all lose their text (but still there if submitted)
-  // Is it possible build method is returning/finishing before the data is available? FutureBuilder doesn't really seem like what I need here.
-  // StackOverflow it
-  
   void _createTerm() {
     Term term = Term.blank();
     HintOption hint = allHints.elementAt(Random().nextInt(allHints.length));
@@ -91,8 +88,6 @@ class _EnterState extends State<Enter> {
         ),
       ),
       child: TermInputCard(
-        // TODO: This is throwing range error (valid value range is empty) when deleting last card in any size list
-        // TODO: Animate cards shifting up and down as well (maybe a different Tween)
         data,
         onDelete: _deleteTerm,
         afterUpdate: _notifyStateUpdate,
