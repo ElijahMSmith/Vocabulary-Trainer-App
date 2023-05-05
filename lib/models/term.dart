@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class Term {
   static int ID_COUNTER = 0; /* TODO: Go to a better system */
 
@@ -75,6 +77,21 @@ class HintOption {
   final String definition;
 
   const HintOption({required this.term, required this.definition});
+
+  @override
+  String toString() {
+    return "\tHint: $term - $definition";
+  }
+}
+
+class TermWithHint {
+  final Term term;
+  final HintOption hint;
+
+  const TermWithHint(this.term, this.hint);
+  TermWithHint.blank()
+      : term = Term.blank(),
+        hint = allHints.elementAt(Random().nextInt(allHints.length));
 }
 
 final List<HintOption> allHints = [

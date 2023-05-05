@@ -3,17 +3,14 @@ import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 
 class TermInputCard extends StatelessWidget {
-  final HintOption hintOption;
-
   final void Function(int) onDelete;
   final void Function() afterUpdate;
-  final Term _data;
+  final TermWithHint _data;
 
   const TermInputCard(
     this._data, {
     required this.onDelete,
     required this.afterUpdate,
-    required this.hintOption,
     required super.key,
   });
 
@@ -31,7 +28,7 @@ class TermInputCard extends StatelessWidget {
             onChanged: onChangeItem,
             decoration: InputDecoration(
               hintText:
-                  label == "Term" ? hintOption.term : hintOption.definition,
+                  label == "Term" ? _data.hint.term : _data.hint.definition,
               hintStyle: TextStyle(
                   color: ThemeColors.black.withOpacity(.4),
                   fontSize: 18,
@@ -74,6 +71,7 @@ class TermInputCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Term termObj = _data.term;
     return Container(
       margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
       decoration: BoxDecoration(
@@ -94,29 +92,29 @@ class TermInputCard extends StatelessWidget {
               child: Column(
                 children: [
                   buildInputLine(
-                    current: _data.term.item,
+                    current: termObj.term.item,
                     label: "Term",
-                    language: _data.term.language,
+                    language: termObj.term.language,
                     onChangeItem: (newText) {
-                      _data.term.item = newText;
+                      termObj.term.item = newText;
                       afterUpdate();
                       // This seems bad but the best I can think of right now
                     },
                     onChangeLanguage: (newLanguage) {
-                      _data.term.language = newLanguage;
+                      termObj.term.language = newLanguage;
                       afterUpdate();
                     },
                   ),
                   buildInputLine(
-                    current: _data.definition.item,
+                    current: termObj.definition.item,
                     label: "Definition",
-                    language: _data.definition.language,
+                    language: termObj.definition.language,
                     onChangeItem: (newText) {
-                      _data.definition.item = newText;
+                      termObj.definition.item = newText;
                       afterUpdate();
                     },
                     onChangeLanguage: (newLanguage) {
-                      _data.definition.language = newLanguage;
+                      termObj.definition.language = newLanguage;
                       afterUpdate();
                     },
                   ),
@@ -131,7 +129,7 @@ class TermInputCard extends StatelessWidget {
             ),
             margin: const EdgeInsets.only(left: 25, right: 25),
             child: IconButton(
-              onPressed: () => onDelete(_data.id),
+              onPressed: () => onDelete(termObj.id),
               icon: const Icon(
                 Icons.delete_outline,
                 size: 30,
