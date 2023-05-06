@@ -43,7 +43,7 @@ class Term {
 
   @override
   String toString() {
-    return "${term.item} (${term.language}) - ${definition.item} (${definition.language})";
+    return "($id) ${term.item} (${term.language}) - ${definition.item} (${definition.language})";
   }
 }
 
