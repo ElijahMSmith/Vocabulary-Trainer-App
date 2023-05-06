@@ -33,7 +33,7 @@ class _EnterState extends State<Enter> {
   void _handleSubmit() {
     for (var thisTerm in _allTerms) {
       // This logs all the data on the cards correctly too - even though the cards are blank, their data is present
-      logger.i(thisTerm);
+      logger.i(thisTerm.term);
     }
   }
 
@@ -91,7 +91,7 @@ class _EnterState extends State<Enter> {
         data,
         onDelete: _deleteTerm,
         afterUpdate: _notifyStateUpdate,
-        key: Key(data.term.id.toString()),
+        key: ObjectKey(data),
       ),
     );
   }

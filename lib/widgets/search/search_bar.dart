@@ -4,16 +4,9 @@ import 'package:vocab_trainer_app/models/term.dart';
 
 class SearchBar extends StatelessWidget {
   final void Function(Term) onSubmit;
+  final List<Term> allOptions;
 
-  // TODO: Get from actual database ONCE and pass in the constructor
-  static final List<Term> allOptions = [
-    Term.fromExisting(TermItem("Hola", "Spanish"), TermItem("Hello", "English"),
-        DateTime.now(), DateTime.now(), 1),
-    Term.fromExisting(TermItem("Bueno(a)", "Spanish"),
-        TermItem("Good", "English"), DateTime.now(), DateTime.now(), 1)
-  ];
-
-  const SearchBar({super.key, required this.onSubmit});
+  const SearchBar(this.allOptions, {super.key, required this.onSubmit});
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +49,8 @@ class SearchBar extends StatelessWidget {
           hintText: 'Search Anything',
         ),
       ),
+      onSelected: (selectedTerm) => onSubmit(selectedTerm),
+      // TODO: Cleaner options boxes
     );
   }
 }

@@ -2,33 +2,51 @@ import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 
-class TermInputCard extends StatelessWidget {
+class TermInputCard extends StatefulWidget {
   final void Function(int) onDelete;
   final void Function() afterUpdate;
   final TermWithHint _data;
 
-  const TermInputCard(
-    this._data, {
-    required this.onDelete,
-    required this.afterUpdate,
-    required super.key,
-  });
+  const TermInputCard(this._data,
+      {super.key, required this.onDelete, required this.afterUpdate});
 
-  Widget buildInputLine(
-      {required String current,
-      required String label,
-      required String language,
-      required void Function(String) onChangeItem,
-      required void Function(String) onChangeLanguage}) {
+  @override
+  State<TermInputCard> createState() => _TermInputCardState();
+}
+
+class _TermInputCardState extends State<TermInputCard> {
+  TextEditingController termController = TextEditingController();
+  TextEditingController defController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    termController.text = widget._data.term.term.item;
+    defController.text = widget._data.term.definition.item;
+
+    termController.addListener(() {
+      widget._data.term.term.item = termController.value.text;
+    });
+    defController.addListener(() {
+      widget._data.term.definition.item = defController.value.text;
+    });
+  }
+
+  Widget buildInputLine({
+    required TextEditingController controller,
+    required String label,
+    required String language,
+    required void Function(String) onChangeLanguage,
+  }) {
+    TermWithHint data = widget._data;
     return Column(
       children: [
         Container(
           margin: const EdgeInsets.symmetric(vertical: 2.5),
           child: TextField(
-            onChanged: onChangeItem,
+            controller: controller,
             decoration: InputDecoration(
-              hintText:
-                  label == "Term" ? _data.hint.term : _data.hint.definition,
+              hintText: label == "Term" ? data.hint.term : data.hint.definition,
               hintStyle: TextStyle(
                   color: ThemeColors.black.withOpacity(.4),
                   fontSize: 18,
@@ -71,7 +89,7 @@ class TermInputCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Term termObj = _data.term;
+    Term termObj = widget._data.term;
     return Container(
       margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
       decoration: BoxDecoration(
@@ -92,30 +110,21 @@ class TermInputCard extends StatelessWidget {
               child: Column(
                 children: [
                   buildInputLine(
-                    current: termObj.term.item,
+                    controller: termController,
                     label: "Term",
                     language: termObj.term.language,
-                    onChangeItem: (newText) {
-                      termObj.term.item = newText;
-                      afterUpdate();
-                      // This seems bad but the best I can think of right now
-                    },
                     onChangeLanguage: (newLanguage) {
                       termObj.term.language = newLanguage;
-                      afterUpdate();
+                      widget.afterUpdate();
                     },
                   ),
                   buildInputLine(
-                    current: termObj.definition.item,
+                    controller: defController,
                     label: "Definition",
                     language: termObj.definition.language,
-                    onChangeItem: (newText) {
-                      termObj.definition.item = newText;
-                      afterUpdate();
-                    },
                     onChangeLanguage: (newLanguage) {
                       termObj.definition.language = newLanguage;
-                      afterUpdate();
+                      widget.afterUpdate();
                     },
                   ),
                 ],
@@ -129,7 +138,7 @@ class TermInputCard extends StatelessWidget {
             ),
             margin: const EdgeInsets.only(left: 25, right: 25),
             child: IconButton(
-              onPressed: () => onDelete(termObj.id),
+              onPressed: () => widget.onDelete(termObj.id),
               icon: const Icon(
                 Icons.delete_outline,
                 size: 30,

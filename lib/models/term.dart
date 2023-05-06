@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
+
 class Term {
   static int ID_COUNTER = 0; /* TODO: Go to a better system */
 
@@ -26,18 +28,22 @@ class Term {
     lastChecked = created;
   }
 
+  Term clone() {
+    return Term.fromExisting(term, definition, created, lastChecked, id);
+  }
+
   int _getNextAvailableID() {
-    /* TODO: Get from database query */
+    // TODO: Save and get from database
     return ID_COUNTER++;
   }
 
   String getAgeString() {
-    // Start from years and check difference, then go to smaller unit as needed
+    // TODO: Start from years and check difference, then go to smaller unit as needed
     return "TODO";
   }
 
   String getNextCheckString() {
-    // Similarly, start from years and check difference
+    // TODO: Similarly, start from years and check difference
     return "TODO";
   }
 
@@ -45,6 +51,9 @@ class Term {
   String toString() {
     return "($id) ${term.item} (${term.language}) - ${definition.item} (${definition.language})";
   }
+
+  // TODO: Define save and delete methods, static get method that
+  // returns a Term object for database access
 }
 
 class TermItem {
@@ -54,22 +63,6 @@ class TermItem {
   TermItem(this.item, this.language);
 
   TermItem.blank();
-
-  bool updateItem(String newItem) {
-    if (newItem.isNotEmpty) {
-      item = newItem;
-      return true;
-    }
-    return false;
-  }
-
-  bool updateLanguage(String newLanguage) {
-    if (newLanguage.isNotEmpty) {
-      language = newLanguage;
-      return true;
-    }
-    return false;
-  }
 }
 
 class HintOption {
