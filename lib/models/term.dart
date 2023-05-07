@@ -47,9 +47,23 @@ class Term {
     return "TODO";
   }
 
+  String getNextCheckStringUnits() {
+    // TODO
+    return "TODO";
+  }
+
+  String getMemoryStatusString() {
+    // TODO
+    return "TODO";
+  }
+
   @override
   String toString() {
     return "($id) ${term.item} (${term.language}) - ${definition.item} (${definition.language})";
+  }
+
+  String getDisplayString() {
+    return "${term.item} (${term.language}): ${definition.item} (${definition.language})";
   }
 
   // TODO: Define save and delete methods, static get method that

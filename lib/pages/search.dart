@@ -49,7 +49,7 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-
+    double screenHeight = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: ThemedAppBar("Edit Terms"),
       body: SingleChildScrollView(
@@ -70,8 +70,35 @@ class _SearchState extends State<Search> {
                     setState(() {});
                   },
                 ),
-                Row(
-                  children: [TimeCard(), TimeCard()],
+                Container(
+                  height: screenHeight * .35,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: TimeCard(
+                          "Existed for:",
+                          currentTerm?.getAgeString() ?? "",
+                          currentTerm != null
+                              ? "Status: ${currentTerm!.getMemoryStatusString()}"
+                              : "Status: N/A",
+                          aspectRatio: 2,
+                        ),
+                      ),
+                      SizedBox(
+                        width: screenWidth * .9 * (1.0 / 3),
+                        child: TimeCard(
+                          "Next Practice:",
+                          currentTerm?.getNextCheckString() ?? "",
+                          currentTerm?.getNextCheckStringUnits() ?? "N/A",
+                          aspectRatio: 1,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 SearchActionButton(),
                 SearchActionButton(),

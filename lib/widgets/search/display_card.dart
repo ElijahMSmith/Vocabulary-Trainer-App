@@ -24,7 +24,6 @@ class _DisplayCardState extends State<DisplayCard> {
   @override
   void initState() {
     super.initState();
-    logger.d("Initing controllers with ${widget._data}");
     termController.text = widget._data?.term.item ?? "";
     defController.text = widget._data?.definition.item ?? "";
     lastTermId = widget._data?.id ?? -1;
@@ -103,8 +102,6 @@ class _DisplayCardState extends State<DisplayCard> {
   @override
   Widget build(BuildContext context) {
     Term? data = widget._data;
-    logger.d(
-        "${data?.term.item} ${data?.term.language} ${data?.definition.item} ${data?.definition.language}");
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),

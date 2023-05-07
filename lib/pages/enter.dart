@@ -31,6 +31,7 @@ class _EnterState extends State<Enter> {
   }
 
   void _handleSubmit() {
+    // TODO
     for (var thisTerm in _allTerms) {
       // This logs all the data on the cards correctly too - even though the cards are blank, their data is present
       logger.i(thisTerm.term);
