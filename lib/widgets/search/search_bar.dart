@@ -6,7 +6,8 @@ import 'package:vocab_trainer_app/models/term.dart';
 class SearchBar extends StatefulWidget {
   final void Function(Term) onSubmit;
   final List<Term> allOptions;
-  SearchBar(this.allOptions, {super.key, required this.onSubmit});
+  const SearchBar(this.allOptions, {super.key, required this.onSubmit});
+
   @override
   State<SearchBar> createState() => _SearchBarState();
 }
@@ -56,7 +57,6 @@ class _SearchBarState extends State<SearchBar> {
           textEditingController: _controller,
           focusNode: _focusNode,
           optionsBuilder: (TextEditingValue currentText) {
-            logger.d("${currentText.text}\n${widget.allOptions}");
             return widget.allOptions.where((term) =>
                 term.term.item
                     .toLowerCase()
@@ -74,7 +74,7 @@ class _SearchBarState extends State<SearchBar> {
               onTapOutside: (event) =>
                   FocusManager.instance.primaryFocus?.unfocus(),
               style: const TextStyle(
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w400,
                 fontSize: 18,
                 color: ThemeColors.black,
               ),
@@ -98,13 +98,17 @@ class _SearchBarState extends State<SearchBar> {
                   ),
                 ),
                 hintText: 'Search Anything',
+                hintStyle: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 18,
+                  color: ThemeColors.black.withOpacity(.4),
+                ),
                 enabledBorder: inputBorder,
                 focusedBorder: inputBorder,
               ),
             );
           },
           optionsViewBuilder: (context, onSelected, options) {
-            logger.d("buildingOptions $options");
             return Align(
               alignment: Alignment.topLeft,
               child: SizedBox(

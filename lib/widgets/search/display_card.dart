@@ -64,7 +64,7 @@ class _DisplayCardState extends State<DisplayCard> {
             ),
             style: const TextStyle(
               color: ThemeColors.black,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
               fontSize: 24,
             ),
           ),

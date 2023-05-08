@@ -22,7 +22,6 @@ class _SearchState extends State<Search> {
   Logger logger = Logger();
 
   void setTerm(Term selected) {
-    logger.d("Setting to $selected");
     setState(() => currentTerm = selected.clone());
   }
 
@@ -50,6 +49,12 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.width;
+
+    String ageString = currentTerm?.getAgeString() ?? "";
+    String memoryStatusString =
+        currentTerm?.getMemoryStatusString() ?? "Status: N/A";
+    String nextCheckString = currentTerm?.getNextCheckString() ?? " N/A";
+
     return Scaffold(
       appBar: ThemedAppBar("Edit Terms"),
       body: SingleChildScrollView(
@@ -81,10 +86,8 @@ class _SearchState extends State<Search> {
                       Expanded(
                         child: TimeCard(
                           "Existed for:",
-                          currentTerm?.getAgeString() ?? "",
-                          currentTerm != null
-                              ? "Status: ${currentTerm!.getMemoryStatusString()}"
-                              : "Status: N/A",
+                          ageString,
+                          memoryStatusString,
                           aspectRatio: 2,
                         ),
                       ),
@@ -92,8 +95,8 @@ class _SearchState extends State<Search> {
                         width: screenWidth * .9 * (1.0 / 3),
                         child: TimeCard(
                           "Next Practice:",
-                          currentTerm?.getNextCheckString() ?? "",
-                          currentTerm?.getNextCheckStringUnits() ?? "N/A",
+                          nextCheckString.split(' ')[0],
+                          nextCheckString.split(' ')[1],
                           aspectRatio: 1,
                         ),
                       ),

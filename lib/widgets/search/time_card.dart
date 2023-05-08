@@ -12,8 +12,6 @@ class TimeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle outsideStyle = const TextStyle(
-        fontSize: 14, fontWeight: FontWeight.w300, color: ThemeColors.black);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
       child: Column(
@@ -23,7 +21,11 @@ class TimeCard extends StatelessWidget {
           Text(
             headerText,
             textAlign: TextAlign.center,
-            style: outsideStyle,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w300,
+              color: ThemeColors.black,
+            ),
           ),
           Expanded(
             child: AspectRatio(
@@ -44,7 +46,7 @@ class TimeCard extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 32,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
@@ -54,7 +56,8 @@ class TimeCard extends StatelessWidget {
           Text(
             trailingText,
             textAlign: TextAlign.center,
-            style: outsideStyle,
+            style: const TextStyle(
+        fontSize: 16, fontWeight: FontWeight.w300, color: ThemeColors.black),
           )
         ],
       ),

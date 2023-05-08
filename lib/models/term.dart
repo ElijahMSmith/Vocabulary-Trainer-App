@@ -1,9 +1,14 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../misc/util.dart';
+
 class Term {
   static int ID_COUNTER = 0; /* TODO: Go to a better system */
+
+  static const List<int> dayWaits = [1, 2, 3, 7, 14, 30];
 
   late int id;
 
@@ -11,21 +16,44 @@ class Term {
   TermItem definition;
 
   final DateTime created;
-  late DateTime lastChecked;
+  final DateTime lastChecked;
 
   int scheduleIndex = 0;
   int failedAttempts = 0;
   int successfulAttempts = 0;
 
-  Term.fromExisting(
-      this.term, this.definition, this.created, this.lastChecked, this.id);
+// TODO: Check this logic and daysUtilNextCheck logic
+  int get daysExisted {
+    DateTime nowStandard = standardizeTime(DateTime.now());
+    int milliDiff =
+        nowStandard.millisecondsSinceEpoch - created.millisecondsSinceEpoch;
+    double daysDiff = milliDiff / 1000 / 60 / 60 / 24;
+    return daysDiff.floor();
+  }
+
+  int get daysUntilNextCheck {
+    if (scheduleIndex >= dayWaits.length) return -1;
+
+    DateTime nextCheck = standardizeTime(
+        lastChecked.add(Duration(days: dayWaits[scheduleIndex])));
+
+    int milliDiff = nextCheck.millisecondsSinceEpoch -
+        DateTime.now().millisecondsSinceEpoch;
+    double daysDiff = milliDiff / 1000 / 60 / 60 / 24;
+    return daysDiff.floor() + 1;
+  }
+
+  Term.fromExisting(this.term, this.definition, DateTime created,
+      DateTime lastChecked, this.id)
+      : created = standardizeTime(created),
+        lastChecked = standardizeTime(lastChecked);
 
   Term.blank()
-      : created = DateTime.now(),
+      : created = standardizeTime(DateTime.now()),
+        lastChecked = standardizeTime(DateTime.now()),
         term = TermItem.blank(),
         definition = TermItem.blank() {
     id = _getNextAvailableID();
-    lastChecked = created;
   }
 
   Term clone() {
@@ -38,23 +66,35 @@ class Term {
   }
 
   String getAgeString() {
-    // TODO: Start from years and check difference, then go to smaller unit as needed
-    return "TODO";
+    int days = daysExisted;
+    if (days >= 365)
+      return "${days / 365} years";
+    else if (days >= 31)
+      return "${days / 31} months";
+    else if (days >= 7)
+      return "${days / 7} months";
+    else
+      return "$days days";
   }
 
   String getNextCheckString() {
-    // TODO: Similarly, start from years and check difference
-    return "TODO";
-  }
-
-  String getNextCheckStringUnits() {
-    // TODO
-    return "TODO";
+    int days = daysUntilNextCheck;
+    if (days >= 365)
+      return "${days / 365} years";
+    else if (days >= 31)
+      return "${days / 31} months";
+    else if (days >= 7)
+      return "${days / 7} months";
+    else
+      return "$days days";
   }
 
   String getMemoryStatusString() {
-    // TODO
-    return "TODO";
+    if (scheduleIndex >= dayWaits.length) return "Status: Learned!";
+    if (scheduleIndex >= dayWaits.length / 2)
+      return "Status: Long-Term Learning";
+    else
+      return "Status: Short-Term Learning";
   }
 
   @override
