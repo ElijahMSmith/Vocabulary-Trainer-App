@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
+import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/pages/enter.dart';
 import 'package:vocab_trainer_app/pages/practice.dart';
 import 'package:vocab_trainer_app/pages/search.dart';
 import 'package:vocab_trainer_app/pages/settings.dart';
 
 void main() {
+  DBHelper.loadPathToDB();
+  // TODO: Read languages and store
   runApp(const App());
 }
 

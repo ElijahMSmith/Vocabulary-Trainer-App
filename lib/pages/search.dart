@@ -75,6 +75,9 @@ class _SearchState extends State<Search> {
                     setState(() {});
                   },
                 ),
+                const SizedBox(
+                  height: 10,
+                ),
                 Container(
                   height: screenHeight * .35,
                   margin:
@@ -103,8 +106,26 @@ class _SearchState extends State<Search> {
                     ],
                   ),
                 ),
-                SearchActionButton(),
-                SearchActionButton(),
+                const SizedBox(
+                  height: 20,
+                ),
+                SearchActionButton(
+                  text: "Reset Practice Schedule",
+                  onPress: () {
+                    //TODO
+                  },
+                  color: ThemeColors.secondary,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SearchActionButton(
+                  text: "Delete This Term",
+                  onPress: () {
+                    //TODO
+                  },
+                  color: ThemeColors.red,
+                ),
               ],
             ),
           ),

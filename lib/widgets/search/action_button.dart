@@ -1,8 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:vocab_trainer_app/misc/colors.dart';
 
 class SearchActionButton extends StatelessWidget {
+  final VoidCallback onPress;
+  final Color color;
+  final String text;
+
+  const SearchActionButton({
+    super.key,
+    required this.onPress,
+    required this.color,
+    required this.text,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return const Text("TODO");
+    return TextButton(
+      onPressed: onPress,
+      style: TextButton.styleFrom(
+          backgroundColor: color,
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          elevation: 4),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
+          color: ThemeColors.primary,
+        ),
+      ),
+    );
   }
 }

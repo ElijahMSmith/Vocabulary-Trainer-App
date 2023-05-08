@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../misc/util.dart';
 
 class Term {
-  static int ID_COUNTER = 0; /* TODO: Go to a better system */
+  static int ID_COUNTER = 0;
 
   static const List<int> dayWaits = [1, 2, 3, 7, 14, 30];
 
@@ -22,7 +22,7 @@ class Term {
   int failedAttempts = 0;
   int successfulAttempts = 0;
 
-// TODO: Check this logic and daysUtilNextCheck logic
+  // TODO: Check this logic and daysUtilNextCheck logic
   int get daysExisted {
     DateTime nowStandard = standardizeTime(DateTime.now());
     int milliDiff =
@@ -68,25 +68,25 @@ class Term {
   String getAgeString() {
     int days = daysExisted;
     if (days >= 365)
-      return "${days / 365} years";
+      return "${days / 365} Years";
     else if (days >= 31)
-      return "${days / 31} months";
+      return "${days / 31} Months";
     else if (days >= 7)
-      return "${days / 7} months";
+      return "${days / 7} Weeks";
     else
-      return "$days days";
+      return "$days Days";
   }
 
   String getNextCheckString() {
     int days = daysUntilNextCheck;
     if (days >= 365)
-      return "${days / 365} years";
+      return "${days / 365} Years";
     else if (days >= 31)
-      return "${days / 31} months";
+      return "${days / 31} Months";
     else if (days >= 7)
-      return "${days / 7} months";
+      return "${days / 7} Weeks";
     else
-      return "$days days";
+      return "$days Days";
   }
 
   String getMemoryStatusString() {

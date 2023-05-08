@@ -89,7 +89,7 @@ class _SearchBarState extends State<SearchBar> {
                 ),
                 suffixIcon: MaterialButton(
                   shape: const CircleBorder(),
-                  padding: EdgeInsets.zero,
+                  minWidth: 0,
                   onPressed: () => _controller.clear(),
                   child: Icon(
                     Icons.close_rounded,
