@@ -6,17 +6,15 @@ import 'package:flutter/material.dart';
 import '../misc/util.dart';
 
 class Term {
-  static int ID_COUNTER = 0;
-
   static const List<int> dayWaits = [1, 2, 3, 7, 14, 30];
 
-  late int id;
+  int? id;
 
-  TermItem term;
-  TermItem definition;
+  late final TermItem term;
+  late final TermItem definition;
 
-  final DateTime created;
-  final DateTime lastChecked;
+  late final DateTime created;
+  late final DateTime lastChecked;
 
   int scheduleIndex = 0;
   int failedAttempts = 0;
@@ -52,17 +50,39 @@ class Term {
       : created = standardizeTime(DateTime.now()),
         lastChecked = standardizeTime(DateTime.now()),
         term = TermItem.blank(),
-        definition = TermItem.blank() {
-    id = _getNextAvailableID();
+        definition = TermItem.blank();
+
+  Term.fromQueryResult(Map<String, Object?> item) {
+    term = TermItem(
+      item["termItem"] as String,
+      item["termLanguage"] as String,
+    );
+    definition = TermItem(
+      item["definitionItem"] as String,
+      item["definitionLanguage"] as String,
+    );
+    created = DateTime.fromMillisecondsSinceEpoch(item["created"] as int);
+    lastChecked =
+        DateTime.fromMillisecondsSinceEpoch(item["lastChecked"] as int);
+    id = item["id"] as int;
+  }
+
+  Map<String, Object> toMap() {
+    return {
+      "termItem": term.item,
+      "termLanguage": term.language,
+      "definitionItem": definition.item,
+      "definitionLanguage": definition.language,
+      "created": created.millisecondsSinceEpoch,
+      "lastChecked": lastChecked.millisecondsSinceEpoch,
+      "scheduleIndex": scheduleIndex,
+      "successfulAttempts": successfulAttempts,
+      "failedAttempts": failedAttempts
+    };
   }
 
   Term clone() {
     return Term.fromExisting(term, definition, created, lastChecked, id);
-  }
-
-  int _getNextAvailableID() {
-    // TODO: Save and get from database
-    return ID_COUNTER++;
   }
 
   String getAgeString() {

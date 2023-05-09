@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
+import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/widgets/app_bar.dart';
 import 'package:vocab_trainer_app/widgets/search/display_card.dart';
@@ -20,6 +21,7 @@ class _SearchState extends State<Search> {
   Term? currentTerm;
   List<Term> allTerms = [];
   Logger logger = Logger();
+  DBHelper db = DBHelper();
 
   void setTerm(Term selected) {
     setState(() => currentTerm = selected.clone());
@@ -33,16 +35,18 @@ class _SearchState extends State<Search> {
     });
   }
 
+  void resetTermWait() {
+    // TODO: Update index in database
+  }
+
   @override
   void initState() {
     super.initState();
-    // TODO: Get all words from list and add to allTerms, remove hard-coded list
-    allTerms = [
-      Term.fromExisting(TermItem("Hola", "Spanish"),
-          TermItem("Hello", "English"), DateTime.now(), DateTime.now(), 1),
-      Term.fromExisting(TermItem("Ni", "Chinese"), TermItem("You", "English"),
-          DateTime.now(), DateTime.now(), 1)
-    ];
+    db.getAllTerms().then((retrieved) {
+      setState(() => allTerms = retrieved);
+      logger.d("Retrieved ${allTerms.length} words");
+      for (Term t in retrieved) logger.d(t);
+    });
   }
 
   @override

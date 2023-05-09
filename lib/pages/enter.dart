@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
+import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/widgets/app_bar.dart';
 import 'package:vocab_trainer_app/widgets/enter/add_button.dart';
@@ -18,10 +19,12 @@ class Enter extends StatefulWidget {
 
 class _EnterState extends State<Enter> {
   final ScrollController _listScrollController = ScrollController();
-  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-  final int ANIM_DURATION = 350;
+  GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
+
+  final DBHelper db = DBHelper();
   Logger logger = Logger();
 
+  final int ANIM_DURATION = 350;
   final List<TermWithHint> _allTerms = [];
 
   @override
@@ -31,26 +34,28 @@ class _EnterState extends State<Enter> {
   }
 
   void _handleSubmit() {
-    // TODO
-    for (var thisTerm in _allTerms) {
-      // This logs all the data on the cards correctly too - even though the cards are blank, their data is present
-      logger.i(thisTerm.term);
-    }
-  }
-
-  void _deleteTerm(int id) {
-    for (var i = 0; i < _allTerms.length; i++) {
-      Term thisTerm = _allTerms[i].term;
-      if (thisTerm.id == id) {
+    db.insertNewTerms(
+        _allTerms.map((termWithHint) => termWithHint.term).toList());
+    logger.d("Submitted ${_allTerms.length} words.");
+    setState(() {
+      for (int i = 0; i < _allTerms.length; i++) {
         TermWithHint removed = _allTerms.removeAt(i);
         listKey.currentState?.removeItem(
           i,
-          (context, animation) => slidingItem(context, removed, animation),
+          (context, animation) => slidingItem(context, removed, animation, i),
           duration: Duration(milliseconds: (ANIM_DURATION / 2).floor()),
         );
-        break;
       }
-    }
+    });
+  }
+
+  void _deleteTerm(int index) {
+    TermWithHint removed = _allTerms.removeAt(index);
+    listKey.currentState?.removeItem(
+      index,
+      (context, animation) => slidingItem(context, removed, animation, index),
+      duration: Duration(milliseconds: (ANIM_DURATION / 2).floor()),
+    );
   }
 
   void _createTerm() {
@@ -77,8 +82,8 @@ class _EnterState extends State<Enter> {
     setState(() {});
   }
 
-  Widget slidingItem(
-      BuildContext context, TermWithHint data, Animation<double> animation) {
+  Widget slidingItem(BuildContext context, TermWithHint data,
+      Animation<double> animation, int listIndex) {
     return SlideTransition(
       position: animation.drive(
         Tween<Offset>(
@@ -92,6 +97,7 @@ class _EnterState extends State<Enter> {
         data,
         onDelete: _deleteTerm,
         afterUpdate: _notifyStateUpdate,
+        listIndex: listIndex,
         key: ObjectKey(data),
       ),
     );
@@ -122,7 +128,7 @@ class _EnterState extends State<Enter> {
               key: listKey,
               initialItemCount: _allTerms.length,
               itemBuilder: (context, index, animation) {
-                return slidingItem(context, _allTerms[index], animation);
+                return slidingItem(context, _allTerms[index], animation, index);
               },
               scrollDirection: Axis.vertical,
               shrinkWrap: true,

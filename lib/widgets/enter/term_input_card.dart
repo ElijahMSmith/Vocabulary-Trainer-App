@@ -6,9 +6,13 @@ class TermInputCard extends StatefulWidget {
   final void Function(int) onDelete;
   final void Function() afterUpdate;
   final TermWithHint _data;
+  final int listIndex;
 
   const TermInputCard(this._data,
-      {super.key, required this.onDelete, required this.afterUpdate});
+      {super.key,
+      required this.onDelete,
+      required this.afterUpdate,
+      required this.listIndex});
 
   @override
   State<TermInputCard> createState() => _TermInputCardState();
@@ -138,7 +142,7 @@ class _TermInputCardState extends State<TermInputCard> {
             ),
             margin: const EdgeInsets.only(left: 25, right: 25),
             child: IconButton(
-              onPressed: () => widget.onDelete(termObj.id),
+              onPressed: () => widget.onDelete(widget.listIndex),
               icon: const Icon(
                 Icons.delete_outline,
                 size: 30,

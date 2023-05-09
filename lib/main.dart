@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:logger/logger.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/pages/enter.dart';
@@ -7,10 +8,15 @@ import 'package:vocab_trainer_app/pages/practice.dart';
 import 'package:vocab_trainer_app/pages/search.dart';
 import 'package:vocab_trainer_app/pages/settings.dart';
 
-void main() {
-  DBHelper.loadPathToDB();
+void main() async {
+  Logger logger = Logger();
   // TODO: Read languages and store
+  // TODO: Make a splash screen and build that until all the async stuff finishes
   runApp(const App());
+  await DBHelper.openDB();
+  DBHelper db = DBHelper();
+  await db.clearAll();
+  logger.d("Finished");
 }
 
 class App extends StatelessWidget {
