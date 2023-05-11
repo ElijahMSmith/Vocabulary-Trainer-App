@@ -7,6 +7,7 @@ import 'package:vocab_trainer_app/widgets/app_bar.dart';
 import 'package:vocab_trainer_app/widgets/search/display_card.dart';
 import 'package:vocab_trainer_app/widgets/search/search_bar.dart';
 
+import '../widgets/confirmation_dialogue.dart';
 import '../widgets/search/action_button.dart';
 import '../widgets/search/time_card.dart';
 
@@ -20,7 +21,6 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   Term? currentTerm;
   List<Term> allTerms = [];
-  Logger logger = Logger();
   DBHelper db = DBHelper();
 
   void setTerm(Term selected) {
@@ -44,8 +44,6 @@ class _SearchState extends State<Search> {
     super.initState();
     db.getAllTerms().then((retrieved) {
       setState(() => allTerms = retrieved);
-      logger.d("Retrieved ${allTerms.length} words");
-      for (Term t in retrieved) logger.d(t);
     });
   }
 
@@ -115,9 +113,9 @@ class _SearchState extends State<Search> {
                 ),
                 SearchActionButton(
                   text: "Reset Practice Schedule",
-                  onPress: () {
-                    //TODO
-                  },
+                  onPress: () => _showOverlay(context, () {
+                    setState(() => _currentTerm?.resetWait());
+                  }),
                   color: ThemeColors.secondary,
                 ),
                 const SizedBox(

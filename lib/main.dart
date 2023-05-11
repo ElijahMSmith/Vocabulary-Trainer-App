@@ -15,7 +15,7 @@ void main() async {
   runApp(const App());
   await DBHelper.openDB();
   DBHelper db = DBHelper();
-  await db.clearAll();
+  await db.clearAll(); // TODO: Remove
   logger.d("Finished");
 }
 

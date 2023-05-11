@@ -6,9 +6,7 @@ import 'package:vocab_trainer_app/models/term.dart';
 class DBHelper {
   static late String _path;
   static late Database _db;
-  final Logger logger;
-
-  DBHelper() : logger = Logger();
+  final Logger logger = Logger();
 
   static Future<void> openDB() async {
     String initPath = await getDatabasesPath();
@@ -32,7 +30,6 @@ class DBHelper {
     List<Term> res = [];
     List<Map<String, Object?>> items = await _db.rawQuery('SELECT * FROM Term');
     for (Map<String, Object?> item in items) {
-      logger.d(item);
       res.add(Term.fromQueryResult(item));
     }
     return res;

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
+import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/widgets/app_bar.dart';
 import 'package:vocab_trainer_app/widgets/practice/mode_button.dart';
 import 'package:vocab_trainer_app/widgets/practice/review_bubble.dart';
+
+import '../misc/db_helper.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,10 +15,20 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _termsLeft = 13;
+  final DBHelper db = DBHelper();
+  List<Term> _reviewTerms = [];
 
   void _startReviewing() {
-    // TODO
+    // TODO: Add a new screen on the navigator stack and send all the terms there
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    db.getAllTerms().then((retrieved) {
+      setState(() => _reviewTerms =
+          retrieved.where((term) => term.daysUntilNextCheck <= 0).toList());
+    });
   }
 
   @override
@@ -40,7 +53,7 @@ class _HomeState extends State<Home> {
                         TextStyle(fontSize: 46, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 25),
                 ReviewBubble(
-                  terms: _termsLeft,
+                  terms: _reviewTerms.length,
                   onPress: _startReviewing,
                 ),
                 const SizedBox(height: 25),

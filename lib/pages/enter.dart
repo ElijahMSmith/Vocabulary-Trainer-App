@@ -20,9 +20,7 @@ class Enter extends StatefulWidget {
 class _EnterState extends State<Enter> {
   final ScrollController _listScrollController = ScrollController();
   GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-
   final DBHelper db = DBHelper();
-  Logger logger = Logger();
 
   final int ANIM_DURATION = 350;
   final List<TermWithHint> _allTerms = [];
@@ -34,9 +32,12 @@ class _EnterState extends State<Enter> {
   }
 
   void _handleSubmit() {
-    db.insertNewTerms(
-        _allTerms.map((termWithHint) => termWithHint.term).toList());
-    logger.d("Submitted ${_allTerms.length} words.");
+    db.insertNewTerms(_allTerms
+        .where((termWithHint) =>
+            termWithHint.term.term.item != "" &&
+            termWithHint.term.definition.item != "")
+        .map((termWithHint) => termWithHint.term)
+        .toList());
     setState(() {
       for (int i = 0; i < _allTerms.length; i++) {
         TermWithHint removed = _allTerms.removeAt(i);
