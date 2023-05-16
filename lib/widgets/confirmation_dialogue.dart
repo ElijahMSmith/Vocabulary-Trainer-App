@@ -31,7 +31,7 @@ class _ConfirmationDialogue extends StatefulWidget {
   final String bodyText;
   final VoidCallback onConfirm;
   final bool hasWrittenConfirmation; // TODO: Implement
-  final bool friendly; // TODO: Implement
+  final bool friendly;
   final OverlayEntry? reference;
 
   const _ConfirmationDialogue({
@@ -56,7 +56,7 @@ class _ConfirmationDialogueState extends State<_ConfirmationDialogue>
   void initState() {
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 100),
+      duration: const Duration(milliseconds: 150),
     );
 
     _tweenAnimation = Tween(begin: 0.0, end: 1.0).animate(_animationController);
@@ -76,84 +76,91 @@ class _ConfirmationDialogueState extends State<_ConfirmationDialogue>
     _animationController.reset();
     _animationController.forward();
 
-    return FadeTransition(
-      opacity: _tweenAnimation,
-      child: Stack(
-        children: [
-          ModalBarrier(
-            color: ThemeColors.black.withOpacity(.6),
-            dismissible: true,
-            onDismiss: () => _animationController
-                .reverse()
-                .whenComplete(() => widget.reference?.remove()),
-          ),
-          Center(
-            child: Container(
-              width: MediaQuery.of(context).size.width * .8,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(30),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: FadeTransition(
+        opacity: _tweenAnimation,
+        child: Stack(
+          children: [
+            ModalBarrier(
+              color: ThemeColors.black.withOpacity(.6),
+              dismissible: true,
+              onDismiss: () => _animationController
+                  .reverse()
+                  .whenComplete(() => widget.reference?.remove()),
+            ),
+            Center(
+              child: Container(
+                width: MediaQuery.of(context).size.width * .8,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(30),
+                  ),
+                  color: ThemeColors.primary,
                 ),
-                color: ThemeColors.primary,
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                      color: ThemeColors.black,
-                      fontSize: 32,
-                      fontWeight: FontWeight.w700,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.title,
+                      style: const TextStyle(
+                        color: ThemeColors.black,
+                        fontSize: 36,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 45),
-                  Text(
-                    widget.bodyText,
-                    style: const TextStyle(
-                      color: ThemeColors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                    const SizedBox(height: 45),
+                    Text(
+                      widget.bodyText,
+                      style: const TextStyle(
+                        color: ThemeColors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 45),
-                  TextButton(
-                    onPressed: () {
-                      _animationController.reverse().whenComplete(() {
-                        widget.reference?.remove();
-                        widget.onConfirm();
-                      });
-                    },
-                    style: ButtonStyle(
-                      padding:
-                          MaterialStateProperty.all(const EdgeInsets.all(12)),
-                      backgroundColor: MaterialStateProperty.all(
-                          widget.friendly ? ThemeColors.blue : ThemeColors.red),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    const SizedBox(height: 45),
+                    TextButton(
+                      onPressed: () {
+                        _animationController.reverse().whenComplete(() {
+                          widget.reference?.remove();
+                          widget.onConfirm();
+                        });
+                      },
+                      style: ButtonStyle(
+                        padding:
+                            MaterialStateProperty.all(const EdgeInsets.all(12)),
+                        backgroundColor: MaterialStateProperty.all(
+                            widget.friendly
+                                ? ThemeColors.blue
+                                : ThemeColors.red),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        "CONFIRM",
+                        style: TextStyle(
+                          color: ThemeColors.primary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    child: const Text(
-                      "CONFIRM",
-                      style: TextStyle(
-                        color: ThemeColors.primary,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
