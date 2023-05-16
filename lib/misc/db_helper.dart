@@ -38,4 +38,9 @@ class DBHelper {
   Future<void> clearAll() async {
     await _db.rawDelete('DELETE FROM Term');
   }
+
+  Future<void> resetWait(Term? term) async {
+    if (term == null) return;
+    // TODO
+  }
 }

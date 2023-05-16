@@ -5,25 +5,28 @@ class SearchActionButton extends StatelessWidget {
   final VoidCallback onPress;
   final Color color;
   final String text;
+  final bool disabled;
 
   const SearchActionButton({
     super.key,
     required this.onPress,
     required this.color,
     required this.text,
+    this.disabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: onPress,
+      onPressed: disabled ? null : onPress,
       style: TextButton.styleFrom(
-          backgroundColor: color,
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 4),
+        backgroundColor: color,
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        elevation: 4,
+      ),
       child: Text(
         text,
         style: const TextStyle(

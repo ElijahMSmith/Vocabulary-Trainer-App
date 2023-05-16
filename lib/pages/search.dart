@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/widgets/app_bar.dart';
+import 'package:vocab_trainer_app/widgets/confirmation_dialogue.dart';
 import 'package:vocab_trainer_app/widgets/search/display_card.dart';
 import 'package:vocab_trainer_app/widgets/search/search_bar.dart';
 
-import '../widgets/confirmation_dialogue.dart';
 import '../widgets/search/action_button.dart';
 import '../widgets/search/time_card.dart';
 
@@ -113,9 +112,14 @@ class _SearchState extends State<Search> {
                 ),
                 SearchActionButton(
                   text: "Reset Practice Schedule",
-                  onPress: () => _showOverlay(context, () {
-                    setState(() => _currentTerm?.resetWait());
-                  }),
+                  disabled: currentTerm != null,
+                  onPress: () => showOverlay(
+                    context: context,
+                    bodyText:
+                        "This term will be reset for review after your first scheduled practice duration.",
+                    friendly: true,
+                    onConfirm: () => db.resetWait(currentTerm),
+                  ),
                   color: ThemeColors.secondary,
                 ),
                 const SizedBox(
