@@ -19,8 +19,6 @@ class _DisplayCardState extends State<DisplayCard> {
   int lastTermId = -1;
   Logger logger = Logger();
 
-  // TODO: This build might be simplified by just building everything empty explicitly (with no controllers and bullshit) if null
-
   @override
   void initState() {
     super.initState();
@@ -28,14 +26,14 @@ class _DisplayCardState extends State<DisplayCard> {
     defController.text = widget._data?.definition.item ?? "";
     lastTermId = widget._data?.id ?? -1;
 
-    // TODO: Editing these fields does change what's in the allTerms list when searching
-    // It shouldn't we should just be editing a clone. Is this a key thing too?
     termController.addListener(() {
       widget._data?.term.item = termController.value.text;
+      widget.afterUpdate();
     });
 
     defController.addListener(() {
       widget._data?.definition.item = defController.value.text;
+      widget.afterUpdate();
     });
   }
 
@@ -82,7 +80,7 @@ class _DisplayCardState extends State<DisplayCard> {
             ),
             InkWell(
               onTap: () {
-                /* TODO: Open language selector and send the result to onChangeLanguage */
+                /* TODO: Open language selector and call widget.afterUpdate(); */
               },
               child: Text(
                 language,

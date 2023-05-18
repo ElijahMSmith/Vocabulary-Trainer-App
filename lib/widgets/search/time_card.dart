@@ -57,7 +57,10 @@ class TimeCard extends StatelessWidget {
             trailingText,
             textAlign: TextAlign.center,
             style: const TextStyle(
-        fontSize: 16, fontWeight: FontWeight.w300, color: ThemeColors.black),
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              color: ThemeColors.black,
+            ),
           )
         ],
       ),

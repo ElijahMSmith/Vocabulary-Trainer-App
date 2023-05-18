@@ -21,21 +21,60 @@ class _SearchState extends State<Search> {
   Term? currentTerm;
   List<Term> allTerms = [];
   DBHelper db = DBHelper();
+  UniqueKey searchKey = UniqueKey();
 
   void setTerm(Term selected) {
-    setState(() => currentTerm = selected.clone());
+    setState(() => currentTerm = selected);
   }
 
-  void deleteTerm() {
-    // TODO: Delete from database
-    allTerms.remove(currentTerm);
+  void deleteTerm() async {
+    if (currentTerm == null) return;
+
+    bool success = await db.deleteTerm(currentTerm!);
+    if (!success) return;
+
+    int oldIndex =
+        allTerms.indexWhere((element) => element.id == currentTerm!.id);
     setState(() {
+      // TODO: The only time the search bar fails to update is if the top-level item is deleted
+      // If any of the other items are deleted, it works as expected. WTF.
       currentTerm = null;
+      if (oldIndex > 0) allTerms.removeAt(oldIndex);
+      searchKey = UniqueKey();
     });
   }
 
-  void resetTermWait() {
-    // TODO: Update index in database
+  void resetTermWait() async {
+    if (currentTerm == null) return;
+
+    bool success = await db.resetWait(currentTerm!);
+    if (!success) return;
+
+    currentTerm!.scheduleIndex = 0;
+    updateCurrentTermLocally();
+  }
+
+  void updateCurrentTermTotally() async {
+    debugPrint("Attempting update");
+    if (currentTerm == null) return;
+
+    bool success = await db.updateTerm(currentTerm!);
+    debugPrint("Updating was a success? $success");
+    if (!success) return;
+
+    updateCurrentTermLocally();
+  }
+
+  void updateCurrentTermLocally() {
+    for (int i = 0; i < allTerms.length; i++) {
+      Term oldTerm = allTerms[i];
+      if (oldTerm.id == currentTerm!.id) {
+        setState(() {
+          allTerms[i] = currentTerm!;
+        });
+        break;
+      }
+    }
   }
 
   @override
@@ -66,15 +105,12 @@ class _SearchState extends State<Search> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 25),
-                SearchBar(allTerms, onSubmit: setTerm),
+                SearchBar(allTerms, onSubmit: setTerm, key: searchKey),
                 const SizedBox(height: 25),
                 DisplayCard(
                   currentTerm,
                   key: ObjectKey(currentTerm),
-                  afterUpdate: () {
-                    // Force refresh
-                    setState(() {});
-                  },
+                  afterUpdate: updateCurrentTermTotally,
                 ),
                 const SizedBox(
                   height: 10,
@@ -118,7 +154,7 @@ class _SearchState extends State<Search> {
                     bodyText:
                         "This term will be reset for review after your first scheduled practice duration.",
                     friendly: true,
-                    onConfirm: () => db.resetWait(currentTerm),
+                    onConfirm: resetTermWait,
                   ),
                   color: ThemeColors.secondary,
                 ),
@@ -127,9 +163,7 @@ class _SearchState extends State<Search> {
                 ),
                 SearchActionButton(
                   text: "Delete This Term",
-                  onPress: () {
-                    //TODO
-                  },
+                  onPress: deleteTerm,
                   color: ThemeColors.red,
                 ),
               ],

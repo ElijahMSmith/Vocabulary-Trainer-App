@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/models/term.dart';
@@ -39,7 +38,7 @@ class _EnterState extends State<Enter> {
         .map((termWithHint) => termWithHint.term)
         .toList());
     setState(() {
-      for (int i = 0; i < _allTerms.length; i++) {
+      for (int i = _allTerms.length - 1; i >= 0; i--) {
         TermWithHint removed = _allTerms.removeAt(i);
         listKey.currentState?.removeItem(
           i,

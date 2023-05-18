@@ -16,7 +16,7 @@ class Term {
   late final DateTime created;
   late final DateTime lastChecked;
 
-  int scheduleIndex = 0;
+  int scheduleIndex = 3;
   int failedAttempts = 0;
   int successfulAttempts = 0;
 
@@ -29,6 +29,7 @@ class Term {
     return daysDiff.floor();
   }
 
+  // TODO: Provide some dummy value for if we are past the end of the schedule
   int get daysUntilNextCheck {
     if (scheduleIndex >= dayWaits.length) return -1;
 
@@ -79,10 +80,6 @@ class Term {
       "successfulAttempts": successfulAttempts,
       "failedAttempts": failedAttempts
     };
-  }
-
-  Term clone() {
-    return Term.fromExisting(term, definition, created, lastChecked, id);
   }
 
   String getAgeString() {
