@@ -17,10 +17,11 @@ class SearchActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("$disabled");
     return TextButton(
       onPressed: disabled ? null : onPress,
       style: TextButton.styleFrom(
-        backgroundColor: color,
+        backgroundColor: disabled ? color.withOpacity(.7) : color,
         padding: const EdgeInsets.symmetric(vertical: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),

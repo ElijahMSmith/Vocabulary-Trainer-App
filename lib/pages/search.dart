@@ -148,7 +148,7 @@ class _SearchState extends State<Search> {
                 ),
                 SearchActionButton(
                   text: "Reset Practice Schedule",
-                  disabled: currentTerm != null,
+                  disabled: currentTerm == null,
                   onPress: () => showOverlay(
                     context: context,
                     bodyText:
@@ -163,7 +163,12 @@ class _SearchState extends State<Search> {
                 ),
                 SearchActionButton(
                   text: "Delete This Term",
-                  onPress: deleteTerm,
+                  disabled: currentTerm == null,
+                  onPress: () => showOverlay(
+                    context: context,
+                    friendly: false,
+                    onConfirm: deleteTerm,
+                  ),
                   color: ThemeColors.red,
                 ),
               ],
