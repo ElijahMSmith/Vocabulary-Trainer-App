@@ -36,10 +36,8 @@ class _SearchState extends State<Search> {
     int oldIndex =
         allTerms.indexWhere((element) => element.id == currentTerm!.id);
     setState(() {
-      // TODO: The only time the search bar fails to update is if the top-level item is deleted
-      // If any of the other items are deleted, it works as expected. WTF.
       currentTerm = null;
-      if (oldIndex > 0) allTerms.removeAt(oldIndex);
+      if (oldIndex >= 0) allTerms.removeAt(oldIndex);
       searchKey = UniqueKey();
     });
   }
@@ -55,12 +53,10 @@ class _SearchState extends State<Search> {
   }
 
   void updateCurrentTermTotally() async {
-    debugPrint("Attempting update");
     if (currentTerm == null) return;
 
     bool success = await db.updateTerm(currentTerm!);
-    debugPrint("Updating was a success? $success");
-    if (!success) return;
+    if (!success) return; // TODO: Toast
 
     updateCurrentTermLocally();
   }

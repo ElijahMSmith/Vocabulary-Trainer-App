@@ -30,7 +30,7 @@ class _ConfirmationDialogue extends StatefulWidget {
   final String title;
   final String bodyText;
   final VoidCallback onConfirm;
-  final bool hasWrittenConfirmation; // TODO: Implement
+  final bool hasWrittenConfirmation;
   final bool friendly;
   final OverlayEntry? reference;
 
@@ -48,46 +48,124 @@ class _ConfirmationDialogue extends StatefulWidget {
 }
 
 class _ConfirmationDialogueState extends State<_ConfirmationDialogue>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _tweenAnimation;
+    with TickerProviderStateMixin {
+  final TextEditingController _confirmController = TextEditingController();
+  bool confirmButtonEnabled = true;
+
+  late AnimationController _opacityAnimationController;
+  late Animation<double> _opacityAnimation;
+
+  late AnimationController _confirmAnimationController;
+  late Animation<Color?> _confirmAnimation;
+
+  late Color buttonColor;
 
   @override
   void initState() {
-    _animationController = AnimationController(
+    buttonColor = widget.friendly ? ThemeColors.blue : ThemeColors.red;
+
+    _opacityAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 150),
     );
 
-    _tweenAnimation = Tween(begin: 0.0, end: 1.0).animate(_animationController);
-    _animationController.forward();
+    _opacityAnimation =
+        Tween(begin: 0.0, end: 1.0).animate(_opacityAnimationController);
+    _opacityAnimationController.forward();
+
+    if (widget.hasWrittenConfirmation) {
+      confirmButtonEnabled = shouldConfirmBeEnabled("");
+
+      _confirmAnimationController = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 300),
+      );
+
+      _confirmAnimation = ColorTween(
+              begin: buttonColor.withOpacity(.6),
+              end: buttonColor.withOpacity(1))
+          .animate(_confirmAnimationController);
+
+      _confirmController.addListener(() {
+        setState(() {
+          bool newVal = shouldConfirmBeEnabled(_confirmController.value.text);
+
+          if (!confirmButtonEnabled && newVal)
+            _confirmAnimationController.forward();
+          else if (confirmButtonEnabled && !newVal)
+            _confirmAnimationController.reverse();
+
+          confirmButtonEnabled = newVal;
+        });
+      });
+    }
 
     super.initState();
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _opacityAnimationController.dispose();
+
+    if (widget.hasWrittenConfirmation) {
+      _confirmAnimationController.dispose();
+      _confirmController.dispose();
+    }
+
     super.dispose();
+  }
+
+  bool shouldConfirmBeEnabled(String newText) {
+    return !widget.hasWrittenConfirmation || newText.toUpperCase() == "CONFIRM";
+  }
+
+  Widget textButtonWidget(bool enabled, Color? backgroundColor) {
+    return TextButton(
+      onPressed: confirmButtonEnabled
+          ? () {
+              _opacityAnimationController.reverse().whenComplete(() {
+                widget.reference?.remove();
+                widget.onConfirm();
+              });
+            }
+          : null,
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all(const EdgeInsets.all(12)),
+        backgroundColor:
+            MaterialStateProperty.all(backgroundColor ?? ThemeColors.blue),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+      child: const Text(
+        "CONFIRM",
+        style: TextStyle(
+          color: ThemeColors.primary,
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    _animationController.reset();
-    _animationController.forward();
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: FadeTransition(
-        opacity: _tweenAnimation,
+        opacity: _opacityAnimation,
         child: Stack(
           children: [
             ModalBarrier(
               color: ThemeColors.black.withOpacity(.6),
               dismissible: true,
-              onDismiss: () => _animationController
-                  .reverse()
-                  .whenComplete(() => widget.reference?.remove()),
+              onDismiss: () {
+                _opacityAnimationController
+                    .reverse()
+                    .whenComplete(() => widget.reference?.remove());
+              },
             ),
             Center(
               child: Container(
@@ -96,7 +174,7 @@ class _ConfirmationDialogueState extends State<_ConfirmationDialogue>
                   borderRadius: BorderRadius.all(
                     Radius.circular(30),
                   ),
-                  color: ThemeColors.primary,
+                  color: ThemeColors.accent,
                 ),
                 padding:
                     const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
@@ -124,37 +202,32 @@ class _ConfirmationDialogueState extends State<_ConfirmationDialogue>
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 45),
-                    TextButton(
-                      onPressed: () {
-                        _animationController.reverse().whenComplete(() {
-                          widget.reference?.remove();
-                          widget.onConfirm();
-                        });
-                      },
-                      style: ButtonStyle(
-                        padding:
-                            MaterialStateProperty.all(const EdgeInsets.all(12)),
-                        backgroundColor: MaterialStateProperty.all(
-                            widget.friendly
-                                ? ThemeColors.blue
-                                : ThemeColors.red),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                    const SizedBox(height: 25),
+                    if (widget.hasWrittenConfirmation) ...[
+                      TextField(
+                        controller: _confirmController,
+                        decoration: const InputDecoration(
+                          hintText: "CONFIRM",
+                          border: UnderlineInputBorder(
+                            borderSide: BorderSide(color: ThemeColors.black),
                           ),
                         ),
-                      ),
-                      child: const Text(
-                        "CONFIRM",
-                        style: TextStyle(
-                          color: ThemeColors.primary,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
+                        style: const TextStyle(
+                          color: ThemeColors.black,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 24,
                         ),
                       ),
-                    ),
+                      const SizedBox(height: 25),
+                      AnimatedBuilder(
+                        animation: _confirmAnimation,
+                        builder: (context, child) => textButtonWidget(
+                            confirmButtonEnabled, _confirmAnimation.value),
+                      ),
+                    ],
+                    if (!widget.hasWrittenConfirmation) ...[
+                      textButtonWidget(confirmButtonEnabled, buttonColor),
+                    ],
                   ],
                 ),
               ),

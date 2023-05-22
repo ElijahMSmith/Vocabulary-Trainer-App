@@ -122,9 +122,6 @@ class Term {
   String getDisplayString() {
     return "${term.item} (${term.language}): ${definition.item} (${definition.language})";
   }
-
-  // TODO: Define save and delete methods, static get method that
-  // returns a Term object for database access
 }
 
 class TermItem {

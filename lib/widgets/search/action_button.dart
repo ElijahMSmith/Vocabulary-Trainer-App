@@ -17,7 +17,6 @@ class SearchActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("$disabled");
     return TextButton(
       onPressed: disabled ? null : onPress,
       style: TextButton.styleFrom(
