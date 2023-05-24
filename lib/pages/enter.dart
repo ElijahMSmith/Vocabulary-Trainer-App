@@ -10,7 +10,11 @@ import 'package:vocab_trainer_app/widgets/enter/add_button.dart';
 import 'package:vocab_trainer_app/widgets/enter/term_input_card.dart';
 
 class Enter extends StatefulWidget {
-  const Enter({super.key});
+  final List<Term> currentTerms;
+  final void Function({List<Term>? newTermsList}) updateTerms;
+
+  const Enter(
+      {super.key, required this.currentTerms, required this.updateTerms});
 
   @override
   State<Enter> createState() => _EnterState();
@@ -37,6 +41,10 @@ class _EnterState extends State<Enter> {
             termWithHint.term.definition.item != "")
         .map((termWithHint) => termWithHint.term)
         .toList());
+
+    widget.currentTerms
+        .addAll(_allTerms.map((hintTerm) => hintTerm.term).toList());
+
     setState(() {
       for (int i = _allTerms.length - 1; i >= 0; i--) {
         TermWithHint removed = _allTerms.removeAt(i);
@@ -47,6 +55,8 @@ class _EnterState extends State<Enter> {
         );
       }
     });
+
+    widget.updateTerms();
   }
 
   void _deleteTerm(int index) {

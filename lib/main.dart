@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
+import 'package:vocab_trainer_app/misc/shared_preferences_helper.dart';
+import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/pages/enter.dart';
 import 'package:vocab_trainer_app/pages/practice.dart';
 import 'package:vocab_trainer_app/pages/search.dart';
 import 'package:vocab_trainer_app/pages/settings.dart';
+import 'package:vocab_trainer_app/widgets/splash.dart';
 
-void main() async {
-  // TODO: Read languages and store
-  // TODO: Make a splash screen and build that until all the async stuff finishes
-
+void main() {
   runApp(const App());
-
-  DBHelper db = DBHelper();
-  await db.openDB();
 }
 
 class App extends StatelessWidget {
@@ -44,28 +41,51 @@ class Framework extends StatefulWidget {
 }
 
 class _FrameworkState extends State<Framework> {
-  static const _allPages = [Enter(), Home(), Search(), Settings()];
+  DBHelper db = DBHelper();
+  bool appReady = false;
 
-  PageController? _pageController;
+  late PageController _pageController;
   int _pageIndex = 1;
+
+  List<Term> _currentTerms = [];
 
   @override
   void initState() {
-    super.initState();
     _pageController = PageController(initialPage: _pageIndex, keepPage: true);
+    performAsyncSetup();
+    super.initState();
   }
 
   @override
   void dispose() {
+    _pageController.dispose();
     super.dispose();
-    _pageController!.dispose();
+  }
+
+  Future<void> performAsyncSetup() async {
+    await SPHelper.initializeSP();
+
+    await db.openDB();
+    _currentTerms.addAll(await db.getAllTerms());
+
+    // TODO: await loadLanguagesList();
+
+    setState(() {
+      appReady = true;
+    });
   }
 
   void _handleTap(int index) {
     setState(() {
       _pageIndex = index;
-      _pageController!.animateToPage(index,
+      _pageController.animateToPage(index,
           duration: const Duration(milliseconds: 350), curve: Curves.easeOut);
+    });
+  }
+
+  void _updateCurrentTerms({List<Term>? newTermsList}) {
+    setState(() {
+      if (newTermsList != null) _currentTerms = newTermsList;
     });
   }
 
@@ -75,36 +95,55 @@ class _FrameworkState extends State<Framework> {
     const SIZE_INACTIVE = 30.0;
 
     return BottomNavigationBarItem(
-        icon: Container(
-            padding: const EdgeInsets.symmetric(vertical: 0),
-            child: Icon(type,
-                size: _pageIndex == index ? SIZE_ACTIVE : SIZE_INACTIVE)),
-        label: label);
+      icon: Container(
+        padding: const EdgeInsets.symmetric(vertical: 0),
+        child: Icon(
+          type,
+          size: _pageIndex == index ? SIZE_ACTIVE : SIZE_INACTIVE,
+        ),
+      ),
+      label: label,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("Rebuilding framework with ${_currentTerms.length} terms.");
+    if (!appReady) return const SplashScreen();
     return Scaffold(
       backgroundColor: ThemeColors.accent,
       body: SizedBox.expand(
         child: PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() => _pageIndex = index);
-            },
-            children: _allPages),
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() => _pageIndex = index);
+          },
+          children: [
+            Enter(
+                currentTerms: _currentTerms, updateTerms: _updateCurrentTerms),
+            Home(currentTerms: _currentTerms, updateTerms: _updateCurrentTerms),
+            Search(
+                currentTerms: _currentTerms, updateTerms: _updateCurrentTerms),
+            Settings(
+                currentTerms: _currentTerms, updateTerms: _updateCurrentTerms),
+          ],
+        ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+            topRight: Radius.circular(20),
+            topLeft: Radius.circular(20),
+          ),
           boxShadow: [
             BoxShadow(blurRadius: 5, color: Colors.black.withOpacity(.25))
           ],
         ),
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+            topRight: Radius.circular(20),
+            topLeft: Radius.circular(20),
+          ),
           child: BottomNavigationBar(
             items: <BottomNavigationBarItem>[
               createNavigationBarItem(Icons.add_circle_rounded, "Enter", 0),

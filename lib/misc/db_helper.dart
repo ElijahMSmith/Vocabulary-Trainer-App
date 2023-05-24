@@ -1,33 +1,17 @@
 import 'package:path/path.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:vocab_trainer_app/misc/util.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 
 final List<int> defaultSchedule = [1, 1, 3, 7, 7, 14, 30, 365];
 
 class DBHelper {
   static Database? _db;
-  List<int> schedule = defaultSchedule;
-  late SharedPreferences _prefs;
 
   bool get isReady {
     return _db != null;
   }
 
   Future<void> openDB() async {
-    _prefs = await SharedPreferences.getInstance();
-    List<String>? retrieved = _prefs.getStringList("schedule");
-    if (retrieved == null) {
-      await _prefs.setStringList(
-        "schedule",
-        intListToStringList(defaultSchedule),
-      );
-      schedule = defaultSchedule;
-    } else {
-      schedule = stringListToIntList(retrieved);
-    }
-
     String initPath = await getDatabasesPath();
     _db = await openDatabase(
       join(initPath, 'terms.db'),
@@ -105,12 +89,6 @@ class DBHelper {
   Future<bool> deleteAllTerms() async {
     if (!isReady) return false;
     await _db!.rawDelete('DELETE FROM Term');
-    return true;
-  }
-
-  Future<bool> updateSchedule(List<int> newSchedule) async {
-    if (!isReady) return false;
-    await _prefs.setStringList("schedule", intListToStringList(newSchedule));
     return true;
   }
 }

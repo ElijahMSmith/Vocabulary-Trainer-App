@@ -1,13 +1,10 @@
-import 'dart:ffi';
 import 'dart:math';
-
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../misc/util.dart';
+import '../misc/shared_preferences_helper.dart';
 
 class Term {
-  static const List<int> dayWaits = [1, 2, 3, 7, 14, 30];
-
   int? id;
 
   late final TermItem term;
@@ -16,44 +13,51 @@ class Term {
   late final DateTime created;
   late final DateTime lastChecked;
 
-  int scheduleIndex = 3;
+  int scheduleIndex = 0;
   int failedAttempts = 0;
   int successfulAttempts = 0;
 
-  // TODO: Check this logic and daysUtilNextCheck logic
+  List<int> schedule = SPHelper.schedule;
+
   int get daysExisted {
     DateTime nowStandard = standardizeTime(DateTime.now());
+    debugPrint("Now: $nowStandard");
+    debugPrint("Created: $created");
     int milliDiff =
         nowStandard.millisecondsSinceEpoch - created.millisecondsSinceEpoch;
     double daysDiff = milliDiff / 1000 / 60 / 60 / 24;
     return daysDiff.floor();
   }
 
-  // TODO: Provide some dummy value for if we are past the end of the schedule
   int get daysUntilNextCheck {
-    if (scheduleIndex >= dayWaits.length) return -1;
+    if (scheduleIndex >= schedule.length) return -1;
 
     DateTime nextCheck = standardizeTime(
-        lastChecked.add(Duration(days: dayWaits[scheduleIndex])));
+        lastChecked.add(Duration(days: schedule[scheduleIndex])));
+    DateTime nowStandard = standardizeTime(DateTime.now());
 
-    int milliDiff = nextCheck.millisecondsSinceEpoch -
-        DateTime.now().millisecondsSinceEpoch;
+    debugPrint("Now: $nowStandard");
+    debugPrint("Next Check: $nextCheck");
+    debugPrint("$schedule, $scheduleIndex");
+
+    int milliDiff =
+        nextCheck.millisecondsSinceEpoch - nowStandard.millisecondsSinceEpoch;
     double daysDiff = milliDiff / 1000 / 60 / 60 / 24;
-    return daysDiff.floor() + 1;
+    return max(daysDiff.floor(), 0);
   }
 
-  Term.fromExisting(this.term, this.definition, DateTime created,
-      DateTime lastChecked, this.id)
-      : created = standardizeTime(created),
-        lastChecked = standardizeTime(lastChecked);
+  Term.blank() {
+    debugPrint("Blank term created");
+    term = TermItem.blank();
+    definition = TermItem.blank();
 
-  Term.blank()
-      : created = standardizeTime(DateTime.now()),
-        lastChecked = standardizeTime(DateTime.now()),
-        term = TermItem.blank(),
-        definition = TermItem.blank();
+    DateTime now = standardizeTime(DateTime.now());
+    created = now;
+    lastChecked = now;
+  }
 
   Term.fromQueryResult(Map<String, Object?> item) {
+    debugPrint("Blank term created");
     term = TermItem(
       item["termItem"] as String,
       item["termLanguage"] as String,
@@ -83,44 +87,45 @@ class Term {
   }
 
   String getAgeString() {
-    int days = daysExisted;
-    if (days >= 365)
-      return "${days / 365} Years";
-    else if (days >= 31)
-      return "${days / 31} Months";
-    else if (days >= 7)
-      return "${days / 7} Weeks";
-    else
-      return "$days Days";
+    return _formatDaysString(daysExisted);
   }
 
   String getNextCheckString() {
-    int days = daysUntilNextCheck;
-    if (days >= 365)
-      return "${days / 365} Years";
-    else if (days >= 31)
-      return "${days / 31} Months";
-    else if (days >= 7)
-      return "${days / 7} Weeks";
-    else
-      return "$days Days";
+    return _formatDaysString(daysUntilNextCheck);
+  }
+
+  String _formatDaysString(int days) {
+    if (days >= 365) {
+      int years = (days / 365) as int;
+      return "$years Year${years != 1 ? "s" : ""}";
+    } else if (days >= 31) {
+      int months = (days / 31) as int;
+      return "$months Month${months != 1 ? "s" : ""}";
+    } else if (days >= 7) {
+      int weeks = (days / 7) as int;
+      return "$weeks Week${weeks != 1 ? "s" : ""}";
+    } else {
+      return "$days Day${days != 1 ? "s" : ""}";
+    }
   }
 
   String getMemoryStatusString() {
-    if (scheduleIndex >= dayWaits.length) return "Status: Learned!";
-    if (scheduleIndex >= dayWaits.length / 2)
+    if (scheduleIndex >= schedule.length) return "Status: Learned!";
+    if (scheduleIndex >= schedule.length / 2)
       return "Status: Long-Term Learning";
     else
       return "Status: Short-Term Learning";
   }
 
-  @override
-  String toString() {
-    return "($id) ${term.item} (${term.language}) - ${definition.item} (${definition.language})";
+  String getDisplayString() {
+    // For using in search completion/other app locations, does not include id
+    return "${term.item} (${term.language}): ${definition.item} (${definition.language})";
   }
 
-  String getDisplayString() {
-    return "${term.item} (${term.language}): ${definition.item} (${definition.language})";
+  @override
+  String toString() {
+    // For printing/debugging, includes id that getDisplayString does not
+    return "($id) ${term.item} (${term.language}) - ${definition.item} (${definition.language})";
   }
 }
 
@@ -150,6 +155,7 @@ class TermWithHint {
   final HintOption hint;
 
   const TermWithHint(this.term, this.hint);
+
   TermWithHint.blank()
       : term = Term.blank(),
         hint = allHints.elementAt(Random().nextInt(allHints.length));

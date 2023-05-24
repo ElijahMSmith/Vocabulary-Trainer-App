@@ -8,7 +8,11 @@ import 'package:vocab_trainer_app/widgets/practice/review_bubble.dart';
 import '../misc/db_helper.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final List<Term> currentTerms;
+  final void Function({List<Term>? newTermsList}) updateTerms;
+
+  const Home(
+      {super.key, required this.currentTerms, required this.updateTerms});
 
   @override
   State<Home> createState() => _HomeState();
@@ -19,16 +23,15 @@ class _HomeState extends State<Home> {
   List<Term> _reviewTerms = [];
 
   void _startReviewing() {
-    // TODO: Add a new screen on the navigator stack and send all the terms there
+    // TODO: Add a new screen on the navigator stack and send reviewTerms, allTerms, and updateTerms there
   }
 
   @override
   void initState() {
     super.initState();
-    db.getAllTerms().then((retrieved) {
-      setState(() => _reviewTerms =
-          retrieved.where((term) => term.daysUntilNextCheck <= 0).toList());
-    });
+    setState(() => _reviewTerms = widget.currentTerms
+        .where((term) => term.daysUntilNextCheck <= 0)
+        .toList());
   }
 
   @override

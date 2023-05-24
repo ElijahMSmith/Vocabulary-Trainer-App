@@ -11,7 +11,12 @@ import '../widgets/search/action_button.dart';
 import '../widgets/search/time_card.dart';
 
 class Search extends StatefulWidget {
-  const Search({super.key});
+  final List<Term> currentTerms;
+  final void Function({List<Term>? newTermsList}) updateTerms;
+
+  Search({super.key, required this.currentTerms, required this.updateTerms}) {
+    debugPrint("$currentTerms");
+  }
 
   @override
   State<Search> createState() => _SearchState();
@@ -19,7 +24,6 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   Term? currentTerm;
-  List<Term> allTerms = [];
   DBHelper db = DBHelper();
   UniqueKey searchKey = UniqueKey();
 
@@ -31,13 +35,13 @@ class _SearchState extends State<Search> {
     if (currentTerm == null) return;
 
     bool success = await db.deleteTerm(currentTerm!);
-    if (!success) return;
+    if (!success) return; // TODO: Toast
 
-    int oldIndex =
-        allTerms.indexWhere((element) => element.id == currentTerm!.id);
     setState(() {
+      widget.currentTerms
+          .removeWhere((element) => element.id == currentTerm!.id);
       currentTerm = null;
-      if (oldIndex >= 0) allTerms.removeAt(oldIndex);
+      widget.updateTerms();
       searchKey = UniqueKey();
     });
   }
@@ -48,37 +52,17 @@ class _SearchState extends State<Search> {
     bool success = await db.resetWait(currentTerm!);
     if (!success) return;
 
-    currentTerm!.scheduleIndex = 0;
-    updateCurrentTermLocally();
+    setState(() {
+      currentTerm!.scheduleIndex = 0;
+    });
   }
 
-  void updateCurrentTermTotally() async {
+  void updateCurrentTermInDB() async {
+    // TODO: Wait for X seconds of no further calls before persisting to DB
     if (currentTerm == null) return;
 
     bool success = await db.updateTerm(currentTerm!);
     if (!success) return; // TODO: Toast
-
-    updateCurrentTermLocally();
-  }
-
-  void updateCurrentTermLocally() {
-    for (int i = 0; i < allTerms.length; i++) {
-      Term oldTerm = allTerms[i];
-      if (oldTerm.id == currentTerm!.id) {
-        setState(() {
-          allTerms[i] = currentTerm!;
-        });
-        break;
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    db.getAllTerms().then((retrieved) {
-      setState(() => allTerms = retrieved);
-    });
   }
 
   @override
@@ -101,12 +85,13 @@ class _SearchState extends State<Search> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 25),
-                SearchBar(allTerms, onSubmit: setTerm, key: searchKey),
+                SearchBar(widget.currentTerms,
+                    onSubmit: setTerm, key: searchKey),
                 const SizedBox(height: 25),
                 DisplayCard(
                   currentTerm,
                   key: ObjectKey(currentTerm),
-                  afterUpdate: updateCurrentTermTotally,
+                  afterUpdate: updateCurrentTermInDB,
                 ),
                 const SizedBox(
                   height: 10,
