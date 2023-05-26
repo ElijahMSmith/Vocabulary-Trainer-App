@@ -8,6 +8,7 @@ import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/widgets/app_bar.dart';
 import 'package:vocab_trainer_app/widgets/enter/add_button.dart';
 import 'package:vocab_trainer_app/widgets/enter/term_input_card.dart';
+import 'package:vocab_trainer_app/widgets/toast.dart';
 
 class Enter extends StatefulWidget {
   final List<Term> currentTerms;
@@ -35,15 +36,20 @@ class _EnterState extends State<Enter> {
   }
 
   void _handleSubmit() {
-    db.insertNewTerms(_allTerms
+    List<Term> nonEmptyTerms = _allTerms
         .where((termWithHint) =>
             termWithHint.term.term.item != "" &&
             termWithHint.term.definition.item != "")
         .map((termWithHint) => termWithHint.term)
-        .toList());
+        .toList();
 
-    widget.currentTerms
-        .addAll(_allTerms.map((hintTerm) => hintTerm.term).toList());
+    if (nonEmptyTerms.isEmpty) {
+      Toast.error("No Terms to Add", context);
+      return;
+    }
+
+    db.insertNewTerms(nonEmptyTerms);
+    widget.currentTerms.addAll(nonEmptyTerms);
 
     setState(() {
       for (int i = _allTerms.length - 1; i >= 0; i--) {
@@ -57,6 +63,7 @@ class _EnterState extends State<Enter> {
     });
 
     widget.updateTerms();
+    Toast.success("Created Terms!", context);
   }
 
   void _deleteTerm(int index) {

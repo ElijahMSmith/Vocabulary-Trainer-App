@@ -7,6 +7,7 @@ class ThemeColors {
   // static const red = "#E04C4C";
   // static const blue = "#2667FF";
   // static const black = "#252323";
+  // static const green = "#04BD3B";
 
   static const primary = Color(0xFFFFFFFF);
   static const accent = Color(0xFFF4F7F9);
@@ -14,4 +15,5 @@ class ThemeColors {
   static const red = Color(0xFFE04C4C);
   static const blue = Color(0xFF2667FF);
   static const black = Color(0xFF252323);
+  static const green = Color(0xFF04BD3B);
 }

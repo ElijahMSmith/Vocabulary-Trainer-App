@@ -6,6 +6,7 @@ import 'package:vocab_trainer_app/widgets/app_bar.dart';
 import 'package:vocab_trainer_app/widgets/confirmation_dialogue.dart';
 import 'package:vocab_trainer_app/widgets/search/display_card.dart';
 import 'package:vocab_trainer_app/widgets/search/search_bar.dart';
+import 'package:vocab_trainer_app/widgets/toast.dart';
 
 import '../widgets/search/action_button.dart';
 import '../widgets/search/time_card.dart';
@@ -35,7 +36,12 @@ class _SearchState extends State<Search> {
     if (currentTerm == null) return;
 
     bool success = await db.deleteTerm(currentTerm!);
-    if (!success) return; // TODO: Toast
+
+    if (mounted && success)
+      Toast.success("Successfully Deleted", context);
+    else if (mounted) Toast.error("Deletion Failed", context);
+
+    if (!success) return;
 
     setState(() {
       widget.currentTerms
@@ -50,6 +56,11 @@ class _SearchState extends State<Search> {
     if (currentTerm == null) return;
 
     bool success = await db.resetWait(currentTerm!);
+
+    if (mounted && success)
+      Toast.success("Successfully Reset", context);
+    else if (mounted) Toast.error("Reset Failed", context);
+
     if (!success) return;
 
     setState(() {
@@ -62,7 +73,7 @@ class _SearchState extends State<Search> {
     if (currentTerm == null) return;
 
     bool success = await db.updateTerm(currentTerm!);
-    if (!success) return; // TODO: Toast
+    if (!success) return;
   }
 
   @override

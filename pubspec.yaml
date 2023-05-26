@@ -16,6 +16,7 @@ dependencies:
   path: ^1.8.2
   flutter_svg: ^2.0.5
   shared_preferences: ^2.1.1
+  cherry_toast: ^1.2.1
 
 dev_dependencies:
   flutter_test:
@@ -30,6 +31,9 @@ flutter:
     - assets/icons/
 
   fonts:
+    - family:  CustomIcons
+      fonts:
+       - asset: fonts/CustomIcons.ttf
     - family: Jost
       fonts:
         - asset: fonts/Jost/static/Jost-Thin.ttf
