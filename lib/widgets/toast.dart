@@ -120,16 +120,18 @@ class CustomToast extends StatefulWidget {
         fullscreenDialog: false,
         opaque: false,
         barrierDismissible: true,
+        barrierColor: Colors.purple,
         pageBuilder: (context, _, __) => GestureDetector(
           onTap: Navigator.of(context).pop,
           child: SafeArea(
             child: AlertDialog(
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.orange,
               elevation: 0,
               content: Column(
                 mainAxisAlignment: toastPosition == Position.Bottom
                     ? MainAxisAlignment.end
                     : MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(
                     child: this,
@@ -152,25 +154,12 @@ class _CustomToastState extends State<CustomToast>
     with TickerProviderStateMixin {
   late Animation<Offset> offsetAnimation;
   late AnimationController slideController;
-  late BoxDecoration toastDecoration;
   Timer? autoDismissTimer;
 
   @override
   void initState() {
     super.initState();
     _initAnimation();
-    toastDecoration = BoxDecoration(
-      color: widget.backgroundColor,
-      borderRadius: BorderRadius.circular(widget.borderRadius),
-      boxShadow: [
-        BoxShadow(
-          color: ThemeColors.black.withOpacity(0.4),
-          spreadRadius: 1,
-          blurRadius: 2,
-          offset: const Offset(0, 1), // changes position of shadow
-        ),
-      ],
-    );
     if (widget.autoDismiss) {
       autoDismissTimer = Timer(widget.toastDuration, () {
         slideController.reverse();
@@ -261,7 +250,18 @@ class _CustomToastState extends State<CustomToast>
         SlideTransition(
           position: offsetAnimation,
           child: Container(
-            decoration: toastDecoration,
+            decoration: BoxDecoration(
+              color: widget.backgroundColor,
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              boxShadow: [
+                BoxShadow(
+                  color: ThemeColors.black.withOpacity(0.4),
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                  offset: const Offset(0, 1), // changes position of shadow
+                ),
+              ],
+            ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
