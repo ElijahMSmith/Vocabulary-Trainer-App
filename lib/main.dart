@@ -108,7 +108,6 @@ class _FrameworkState extends State<Framework> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("Rebuilding framework with ${_currentTerms.length} terms.");
     if (!appReady) return const SplashScreen();
     return Scaffold(
       backgroundColor: ThemeColors.accent,

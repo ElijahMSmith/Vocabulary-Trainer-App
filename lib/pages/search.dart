@@ -15,9 +15,7 @@ class Search extends StatefulWidget {
   final List<Term> currentTerms;
   final void Function({List<Term>? newTermsList}) updateTerms;
 
-  Search({super.key, required this.currentTerms, required this.updateTerms}) {
-    debugPrint("$currentTerms");
-  }
+  Search({super.key, required this.currentTerms, required this.updateTerms});
 
   @override
   State<Search> createState() => _SearchState();

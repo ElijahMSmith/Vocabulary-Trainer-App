@@ -21,8 +21,6 @@ class Term {
 
   int get daysExisted {
     DateTime nowStandard = standardizeTime(DateTime.now());
-    debugPrint("Now: $nowStandard");
-    debugPrint("Created: $created");
     int milliDiff =
         nowStandard.millisecondsSinceEpoch - created.millisecondsSinceEpoch;
     double daysDiff = milliDiff / 1000 / 60 / 60 / 24;
@@ -36,10 +34,6 @@ class Term {
         lastChecked.add(Duration(days: schedule[scheduleIndex])));
     DateTime nowStandard = standardizeTime(DateTime.now());
 
-    debugPrint("Now: $nowStandard");
-    debugPrint("Next Check: $nextCheck");
-    debugPrint("$schedule, $scheduleIndex");
-
     int milliDiff =
         nextCheck.millisecondsSinceEpoch - nowStandard.millisecondsSinceEpoch;
     double daysDiff = milliDiff / 1000 / 60 / 60 / 24;
@@ -47,7 +41,6 @@ class Term {
   }
 
   Term.blank() {
-    debugPrint("Blank term created");
     term = TermItem.blank();
     definition = TermItem.blank();
 
@@ -57,7 +50,6 @@ class Term {
   }
 
   Term.fromQueryResult(Map<String, Object?> item) {
-    debugPrint("Blank term created");
     term = TermItem(
       item["termItem"] as String,
       item["termLanguage"] as String,

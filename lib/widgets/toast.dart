@@ -45,8 +45,9 @@ class Toast {
   }
 }
 
+// ignore: must_be_immutable
 class CustomToast extends StatefulWidget {
-  const CustomToast({
+  CustomToast({
     Key? key,
     required this.title,
     required this.icon,
@@ -112,38 +113,41 @@ class CustomToast extends StatefulWidget {
   // Define wether the animation on the icon will be rendered or not
   final bool enableIconAnimation;
 
+  OverlayEntry? ref;
+
   // Display the created toast using the current BuildContext
   void show(BuildContext context) {
-    Navigator.of(context).push(
-      // ignore: inference_failure_on_instance_creation
-      PageRouteBuilder(
-        fullscreenDialog: false,
-        opaque: false,
-        barrierDismissible: true,
-        barrierColor: Colors.purple,
-        pageBuilder: (context, _, __) => GestureDetector(
-          onTap: Navigator.of(context).pop,
-          child: SafeArea(
-            child: AlertDialog(
-              backgroundColor: Colors.orange,
-              elevation: 0,
-              content: Column(
-                mainAxisAlignment: toastPosition == Position.Bottom
-                    ? MainAxisAlignment.end
-                    : MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    child: this,
-                  ),
-                  const SizedBox(height: 40),
-                ],
+    OverlayState overlayState = Overlay.of(context);
+
+    ref = OverlayEntry(
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisAlignment: toastPosition == Position.Bottom
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
+            children: [
+              AlertDialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                content: SizedBox(
+                  child: this,
+                ),
               ),
-            ),
+            ],
           ),
-        ),
-      ),
+        );
+      },
     );
+
+    overlayState.insert(ref!);
+  }
+
+  void dismissOverlay() {
+    if (ref != null) {
+      ref!.remove();
+      ref = null;
+    }
   }
 
   @override
@@ -163,9 +167,7 @@ class _CustomToastState extends State<CustomToast>
     if (widget.autoDismiss) {
       autoDismissTimer = Timer(widget.toastDuration, () {
         slideController.reverse();
-        Timer(widget.animationDuration, () {
-          if (mounted) Navigator.maybePop(context);
-        });
+        Timer(widget.animationDuration, widget.dismissOverlay);
       });
     }
   }
@@ -262,6 +264,7 @@ class _CustomToastState extends State<CustomToast>
                 ),
               ],
             ),
+            margin: const EdgeInsets.only(bottom: 40),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -311,7 +314,7 @@ class _CustomToastState extends State<CustomToast>
         autoDismissTimer?.cancel();
         Timer(
           widget.animationDuration,
-          () => Navigator.pop(context),
+          widget.dismissOverlay,
         );
       },
       child: const Icon(
