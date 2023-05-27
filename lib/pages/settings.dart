@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/term.dart';
-import 'package:vocab_trainer_app/widgets/app_bar.dart';
-import 'package:vocab_trainer_app/widgets/toast.dart';
+import 'package:vocab_trainer_app/widgets/miscellaneous/app_bar.dart';
+import 'package:vocab_trainer_app/widgets/miscellaneous/toast.dart';
 
 class Settings extends StatefulWidget {
   final List<Term> currentTerms;

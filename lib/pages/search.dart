@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/models/term.dart';
-import 'package:vocab_trainer_app/widgets/app_bar.dart';
-import 'package:vocab_trainer_app/widgets/confirmation_dialogue.dart';
+import 'package:vocab_trainer_app/widgets/miscellaneous/app_bar.dart';
+import 'package:vocab_trainer_app/widgets/overlays/confirmation_dialogue.dart';
 import 'package:vocab_trainer_app/widgets/search/display_card.dart';
 import 'package:vocab_trainer_app/widgets/search/search_bar.dart';
-import 'package:vocab_trainer_app/widgets/toast.dart';
+import 'package:vocab_trainer_app/widgets/miscellaneous/toast.dart';
 
 import '../widgets/search/action_button.dart';
 import '../widgets/search/time_card.dart';
@@ -15,7 +15,8 @@ class Search extends StatefulWidget {
   final List<Term> currentTerms;
   final void Function({List<Term>? newTermsList}) updateTerms;
 
-  Search({super.key, required this.currentTerms, required this.updateTerms});
+  const Search(
+      {super.key, required this.currentTerms, required this.updateTerms});
 
   @override
   State<Search> createState() => _SearchState();
@@ -139,13 +140,14 @@ class _SearchState extends State<Search> {
                 SearchActionButton(
                   text: "Reset Practice Schedule",
                   disabled: currentTerm == null,
-                  onPress: () => showOverlay(
-                    context: context,
-                    bodyText:
-                        "This term will be reset for review after your first scheduled practice duration.",
-                    friendly: true,
-                    onConfirm: resetTermWait,
-                  ),
+                  onPress: () {
+                    ConfirmationDialogue(
+                      bodyText:
+                          "This term will be reset for review after your first scheduled practice duration.",
+                      friendly: true,
+                      onConfirm: resetTermWait,
+                    ).show(context);
+                  },
                   color: ThemeColors.secondary,
                 ),
                 const SizedBox(
@@ -154,11 +156,12 @@ class _SearchState extends State<Search> {
                 SearchActionButton(
                   text: "Delete This Term",
                   disabled: currentTerm == null,
-                  onPress: () => showOverlay(
-                    context: context,
-                    friendly: false,
-                    onConfirm: deleteTerm,
-                  ),
+                  onPress: () {
+                    ConfirmationDialogue(
+                      friendly: false,
+                      onConfirm: deleteTerm,
+                    ).show(context);
+                  },
                   color: ThemeColors.red,
                 ),
               ],

@@ -1,53 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 
-void showOverlay({
-  required BuildContext context,
-  String title = "Are You Sure?",
-  String bodyText = "This Action is Irreversible!",
-  bool friendly = false,
-  bool hasWrittenConfirmation = false,
-  required VoidCallback onConfirm,
-}) {
-  OverlayState overlayState = Overlay.of(context);
-  OverlayEntry? content;
-  content = OverlayEntry(
-    builder: (context) {
-      return _ConfirmationDialogue(
-        title: title,
-        bodyText: bodyText,
-        friendly: friendly,
-        hasWrittenConfirmation: hasWrittenConfirmation,
-        onConfirm: onConfirm,
-        reference: content,
-      );
-    },
-  );
-  overlayState.insert(content);
-}
-
-class _ConfirmationDialogue extends StatefulWidget {
+// ignore: must_be_immutable
+class ConfirmationDialogue extends StatefulWidget {
   final String title;
   final String bodyText;
   final VoidCallback onConfirm;
   final bool hasWrittenConfirmation;
   final bool friendly;
-  final OverlayEntry? reference;
+  OverlayEntry? overlayRef;
 
-  const _ConfirmationDialogue({
-    required this.title,
-    required this.bodyText,
-    required this.friendly,
+  ConfirmationDialogue({
+    super.key,
+    this.title = "Are You Sure?",
+    this.bodyText = "This action is irreversible!",
+    this.friendly = false,
+    this.hasWrittenConfirmation = false,
     required this.onConfirm,
-    required this.hasWrittenConfirmation,
-    required this.reference,
   });
 
+  void show(BuildContext context) {
+    OverlayState overlayState = Overlay.of(context);
+    overlayRef = OverlayEntry(
+      builder: (context) {
+        return SafeArea(child: this);
+      },
+    );
+    overlayState.insert(overlayRef!);
+  }
+
+  void dismissOverlay() {
+    if (overlayRef != null) {
+      overlayRef!.remove();
+      overlayRef = null;
+    }
+  }
+
   @override
-  State<_ConfirmationDialogue> createState() => _ConfirmationDialogueState();
+  State<ConfirmationDialogue> createState() => _ConfirmationDialogueState();
 }
 
-class _ConfirmationDialogueState extends State<_ConfirmationDialogue>
+class _ConfirmationDialogueState extends State<ConfirmationDialogue>
     with TickerProviderStateMixin {
   final TextEditingController _confirmController = TextEditingController();
   bool confirmButtonEnabled = true;
@@ -124,7 +117,7 @@ class _ConfirmationDialogueState extends State<_ConfirmationDialogue>
       onPressed: confirmButtonEnabled
           ? () {
               _opacityAnimationController.reverse().whenComplete(() {
-                widget.reference?.remove();
+                widget.overlayRef?.remove();
                 widget.onConfirm();
               });
             }
@@ -164,7 +157,7 @@ class _ConfirmationDialogueState extends State<_ConfirmationDialogue>
               onDismiss: () {
                 _opacityAnimationController
                     .reverse()
-                    .whenComplete(() => widget.reference?.remove());
+                    .whenComplete(() => widget.overlayRef?.remove());
               },
             ),
             Center(

@@ -8,7 +8,7 @@ import 'package:vocab_trainer_app/pages/enter.dart';
 import 'package:vocab_trainer_app/pages/practice.dart';
 import 'package:vocab_trainer_app/pages/search.dart';
 import 'package:vocab_trainer_app/pages/settings.dart';
-import 'package:vocab_trainer_app/widgets/splash.dart';
+import 'package:vocab_trainer_app/widgets/miscellaneous/splash.dart';
 
 void main() {
   runApp(const App());

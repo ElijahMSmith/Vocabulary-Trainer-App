@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/term.dart';
+import 'package:vocab_trainer_app/widgets/overlays/language_selector.dart';
 
 class DisplayCard extends StatefulWidget {
   final Term? _data;
@@ -44,11 +45,12 @@ class _DisplayCardState extends State<DisplayCard> {
     defController.dispose();
   }
 
-  Widget buildInputLine(
-      {required TextEditingController controller,
-      required String label,
-      required String language,
-      required void Function(String) onChangeLanguage}) {
+  Widget buildInputLine({
+    required TextEditingController controller,
+    required String label,
+    required String language,
+    required void Function(String) onChangeLanguage,
+  }) {
     return Column(
       children: [
         Container(
@@ -79,13 +81,19 @@ class _DisplayCardState extends State<DisplayCard> {
               ),
             ),
             InkWell(
-              onTap: () {
-                /* TODO: Open language selector and call widget.afterUpdate(); */
-              },
+              onTap: language == "Not Selected"
+                  ? null
+                  : () {
+                      LanguageSelector(
+                        currentSelection: language,
+                        onLanguageSelect: onChangeLanguage,
+                      ).show(context);
+                    },
               child: Text(
                 language,
-                style: const TextStyle(
-                  color: ThemeColors.blue,
+                style: TextStyle(
+                  color: ThemeColors.blue
+                      .withOpacity(language == "Not Selected" ? .4 : 1),
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
                 ),

@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/models/term.dart';
-import 'package:vocab_trainer_app/widgets/app_bar.dart';
+import 'package:vocab_trainer_app/widgets/miscellaneous/app_bar.dart';
 import 'package:vocab_trainer_app/widgets/enter/add_button.dart';
 import 'package:vocab_trainer_app/widgets/enter/term_input_card.dart';
-import 'package:vocab_trainer_app/widgets/toast.dart';
+import 'package:vocab_trainer_app/widgets/miscellaneous/toast.dart';
 
 class Enter extends StatefulWidget {
   final List<Term> currentTerms;

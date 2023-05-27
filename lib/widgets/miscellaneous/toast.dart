@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
-
-import 'custom_icons.dart';
+import 'package:vocab_trainer_app/widgets/miscellaneous/custom_icons.dart';
 
 class Toast {
   static void success(String content, BuildContext context) {
@@ -81,7 +80,7 @@ class CustomToast extends StatefulWidget {
   // Size of leading icon
   final double iconSize;
 
-  // PAdding for leading icon
+  // Padding for leading icon
   final double iconPadding;
 
   // Position displayed in screen, one of:
