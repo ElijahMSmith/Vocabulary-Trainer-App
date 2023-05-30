@@ -34,7 +34,7 @@ class _SettingsState extends State<Settings> {
           TextButton(
             child: const Text("Info"),
             onPressed: () => Toast.info("Info Toast.", context),
-          )
+          ),
         ],
       ),
       backgroundColor: ThemeColors.accent,

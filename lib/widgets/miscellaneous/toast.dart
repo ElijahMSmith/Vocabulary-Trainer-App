@@ -121,19 +121,22 @@ class CustomToast extends StatefulWidget {
     ref = OverlayEntry(
       builder: (context) {
         return SafeArea(
-          child: Column(
-            mainAxisAlignment: toastPosition == Position.Bottom
-                ? MainAxisAlignment.end
-                : MainAxisAlignment.start,
-            children: [
-              AlertDialog(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                content: SizedBox(
-                  child: this,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 50),
+            child: Column(
+              mainAxisAlignment: toastPosition == Position.Bottom
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
+              children: [
+                AlertDialog(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  content: SizedBox(
+                    child: this,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -263,7 +266,6 @@ class _CustomToastState extends State<CustomToast>
                 ),
               ],
             ),
-            margin: const EdgeInsets.only(bottom: 40),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(

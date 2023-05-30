@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
+import 'package:vocab_trainer_app/models/language_data.dart';
 
 // TODO: replace
 const defaultLanguageList = [
@@ -16,6 +17,8 @@ const defaultLanguageList = [
 
 // ignore: must_be_immutable
 class LanguageSelector extends StatefulWidget {
+  final LanguageCollection allLanguages = LanguageCollection();
+
   final String? currentSelection;
   final void Function(String newLanguage) onLanguageSelect;
   OverlayEntry? overlayRef;
@@ -114,22 +117,20 @@ class _LanguageSelectorState extends State<LanguageSelector>
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 14),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // TODO: Why are these icons not right next to the container? Where is there extra space and how can I remove it?
                         const Icon(
                           Icons.arrow_drop_up,
                           size: 48,
                           color: ThemeColors.secondary,
                         ),
                         Container(
-                          height: 240,
+                          height: 255,
                           decoration: BoxDecoration(
                             color: ThemeColors.primary,
                             border: Border.all(
-                              color: ThemeColors.black.withOpacity(.4),
+                              color: ThemeColors.secondary.withOpacity(.4),
                               width: 1,
                               strokeAlign: BorderSide.strokeAlignCenter,
                             ),
@@ -143,26 +144,34 @@ class _LanguageSelectorState extends State<LanguageSelector>
                             ),
                             child: ListView(
                               children: [
-                                const SizedBox(height: 10),
-                                ...defaultLanguageList
+                                ...widget.allLanguages.list
                                     .map<Widget>(
-                                      (language) => Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 15,
-                                          vertical: 7.5,
-                                        ),
-                                        child: Text(
-                                          language,
-                                          style: const TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.w300,
-                                            color: ThemeColors.black,
+                                      (languageData) => Material(
+                                        color: widget.currentSelection ==
+                                                languageData.name
+                                            ? ThemeColors.secondary
+                                            : ThemeColors.primary,
+                                        child: ListTile(
+                                          title: Text(
+                                            languageData.name,
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.w300,
+                                              color: widget.currentSelection ==
+                                                      languageData.name
+                                                  ? ThemeColors.primary
+                                                  : ThemeColors.black,
+                                            ),
                                           ),
+                                          onTap: () {
+                                            widget.onLanguageSelect(
+                                                languageData.name);
+                                            widget.overlayRef?.remove();
+                                          },
                                         ),
                                       ),
                                     )
                                     .toList(),
-                                const SizedBox(height: 10),
                               ],
                             ),
                           ),

@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 
-class SearchBar extends StatefulWidget {
+class TermSearchBar extends StatefulWidget {
   final void Function(Term) onSubmit;
   final List<Term> allOptions;
-  const SearchBar(this.allOptions, {super.key, required this.onSubmit});
+  const TermSearchBar(this.allOptions, {super.key, required this.onSubmit});
 
   @override
-  State<SearchBar> createState() => _SearchBarState();
+  State<TermSearchBar> createState() => _SearchBarState();
 }
 
-class _SearchBarState extends State<SearchBar> {
+class _SearchBarState extends State<TermSearchBar> {
   late TextEditingController _controller;
   late FocusNode _focusNode;
 
   final GlobalKey _autocompleteKey = GlobalKey();
-  final Logger logger = Logger();
 
   void _onSearchSubmit() {
     // TODO: Get something from the list and pass to onSubmit

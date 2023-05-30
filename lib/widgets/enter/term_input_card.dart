@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/term.dart';
+import 'package:vocab_trainer_app/widgets/overlays/language_selector.dart';
 
 class TermInputCard extends StatefulWidget {
   final void Function(int) onDelete;
@@ -76,9 +77,10 @@ class _TermInputCardState extends State<TermInputCard> {
                   fontWeight: FontWeight.w300),
             ),
             InkWell(
-              onTap: () {
-                /* TODO: Open language selector and send the result to onChangeLanguage */
-              },
+              onTap: () => LanguageSelector(
+                currentSelection: language,
+                onLanguageSelect: onChangeLanguage,
+              ).show(context),
               child: Text(
                 language,
                 style: const TextStyle(
@@ -118,7 +120,9 @@ class _TermInputCardState extends State<TermInputCard> {
                     label: "Term",
                     language: termObj.term.language,
                     onChangeLanguage: (newLanguage) {
-                      termObj.term.language = newLanguage;
+                      setState(() {
+                        termObj.term.language = newLanguage;
+                      });
                       widget.afterUpdate();
                     },
                   ),
@@ -127,7 +131,9 @@ class _TermInputCardState extends State<TermInputCard> {
                     label: "Definition",
                     language: termObj.definition.language,
                     onChangeLanguage: (newLanguage) {
-                      termObj.definition.language = newLanguage;
+                      setState(() {
+                        termObj.definition.language = newLanguage;
+                      });
                       widget.afterUpdate();
                     },
                   ),
@@ -141,12 +147,20 @@ class _TermInputCardState extends State<TermInputCard> {
               shape: BoxShape.circle,
             ),
             margin: const EdgeInsets.only(left: 25, right: 25),
-            child: IconButton(
-              onPressed: () => widget.onDelete(widget.listIndex),
-              icon: const Icon(
-                Icons.delete_outline,
-                size: 30,
-                color: ThemeColors.red,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(25),
+              ),
+              child: Material(
+                child: IconButton(
+                  onPressed: () => widget.onDelete(widget.listIndex),
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    size: 30,
+                    color: ThemeColors.red,
+                  ),
+                  color: ThemeColors.primary,
+                ),
               ),
             ),
           ),

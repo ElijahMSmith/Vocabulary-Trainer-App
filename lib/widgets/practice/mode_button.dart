@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 
 class ModeButton extends StatelessWidget {
@@ -8,9 +7,8 @@ class ModeButton extends StatelessWidget {
   final Color bkgIconColor;
   final String name;
   final String tag;
-  final Logger logger = Logger();
 
-  ModeButton(
+  const ModeButton(
       {super.key,
       required this.iconData,
       required this.name,

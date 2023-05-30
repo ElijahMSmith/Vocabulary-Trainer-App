@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/misc/shared_preferences_helper.dart';
+import 'package:vocab_trainer_app/models/language_data.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/pages/enter.dart';
 import 'package:vocab_trainer_app/pages/practice.dart';
@@ -22,7 +23,7 @@ class App extends StatelessWidget {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Vocabulary Trainer App', // TODO: name change
       theme: ThemeData(
         primarySwatch: Colors.blue,
         fontFamily: "Jost",
@@ -67,8 +68,6 @@ class _FrameworkState extends State<Framework> {
 
     await db.openDB();
     _currentTerms.addAll(await db.getAllTerms());
-
-    // TODO: await loadLanguagesList();
 
     setState(() {
       appReady = true;

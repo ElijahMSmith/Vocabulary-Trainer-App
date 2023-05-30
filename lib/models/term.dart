@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:flutter/foundation.dart';
 
 import '../misc/util.dart';
 import '../misc/shared_preferences_helper.dart';

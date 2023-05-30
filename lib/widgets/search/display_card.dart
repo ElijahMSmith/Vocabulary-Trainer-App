@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/widgets/overlays/language_selector.dart';
@@ -18,7 +17,6 @@ class _DisplayCardState extends State<DisplayCard> {
   TextEditingController termController = TextEditingController();
   TextEditingController defController = TextEditingController();
   int lastTermId = -1;
-  Logger logger = Logger();
 
   @override
   void initState() {
@@ -127,7 +125,9 @@ class _DisplayCardState extends State<DisplayCard> {
             language: data?.term.language ?? "Not Selected",
             onChangeLanguage: (newLanguage) {
               if (data != null) {
-                data.term.language = newLanguage;
+                setState(() {
+                  data.term.language = newLanguage;
+                });
                 widget.afterUpdate();
               }
             },
@@ -138,7 +138,9 @@ class _DisplayCardState extends State<DisplayCard> {
             language: data?.definition.language ?? "Not Selected",
             onChangeLanguage: (newLanguage) {
               if (data != null) {
-                data.definition.language = newLanguage;
+                setState(() {
+                  data.definition.language = newLanguage;
+                });
                 widget.afterUpdate();
               }
             },

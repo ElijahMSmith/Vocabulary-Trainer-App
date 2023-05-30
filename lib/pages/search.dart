@@ -95,7 +95,7 @@ class _SearchState extends State<Search> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 25),
-                SearchBar(widget.currentTerms,
+                TermSearchBar(widget.currentTerms,
                     onSubmit: setTerm, key: searchKey),
                 const SizedBox(height: 25),
                 DisplayCard(

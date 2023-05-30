@@ -76,9 +76,16 @@ class _EnterState extends State<Enter> {
   }
 
   void _createTerm() {
-    Term term = Term.blank();
+    Term newTerm = Term.blank();
+    if (_allTerms.isNotEmpty) {
+      TermWithHint last = _allTerms.last;
+      newTerm.term.language = last.term.term.language;
+      newTerm.definition.language = last.term.definition.language;
+    }
+
     HintOption hint = allHints.elementAt(Random().nextInt(allHints.length));
-    _allTerms.add(TermWithHint(term, hint));
+    _allTerms.add(TermWithHint(newTerm, hint));
+
     listKey.currentState?.insertItem(
       _allTerms.length - 1,
       duration: Duration(milliseconds: ANIM_DURATION),
