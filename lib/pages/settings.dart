@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/widgets/miscellaneous/app_bar.dart';
-import 'package:vocab_trainer_app/widgets/miscellaneous/toast.dart';
+import 'package:vocab_trainer_app/widgets/settings/settings_button.dart';
 
 class Settings extends StatefulWidget {
   final List<Term> currentTerms;
@@ -20,22 +20,54 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ThemedAppBar("Settings"),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          TextButton(
-            child: const Text("Success"),
-            onPressed: () => Toast.success("Success Toast!", context),
-          ),
-          TextButton(
-            child: const Text("Error"),
-            onPressed: () => Toast.error("Error Toast!", context),
-          ),
-          TextButton(
-            child: const Text("Info"),
-            onPressed: () => Toast.info("Info Toast.", context),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // TODO: Implement handlers and initialSwitchToggleState
+            SettingsButton(
+              text: "Modify Practice Schedule",
+              onPress: () {},
+            ),
+            SettingsButton(
+              text: "Manage Notifications",
+              onPress: () {},
+            ),
+            SettingsButton(
+              text: "Reset Schedule After Miss",
+              isSwitch: true,
+              initialSwitchToggleState: false,
+              onSwitchChange: (newVal) {},
+            ),
+            SettingsButton(
+              text: "Dark Theme (Coming Soon!)",
+              isSwitch: true,
+              initialSwitchToggleState: false,
+              onSwitchChange: (newVal) {},
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Danger Zone",
+              style: TextStyle(
+                color: ThemeColors.red,
+                fontSize: 32,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 10),
+            SettingsButton(
+              text: "Reset All Term Schedules",
+              dangerous: true,
+              onPress: () {},
+            ),
+            SettingsButton(
+              text: "Delete All Terms",
+              dangerous: true,
+              onPress: () {},
+            ),
+          ],
+        ),
       ),
       backgroundColor: ThemeColors.accent,
     );
