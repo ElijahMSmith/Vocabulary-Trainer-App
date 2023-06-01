@@ -162,7 +162,7 @@ class _ConfirmationDialogueState extends State<ConfirmationDialogue>
             ),
             Center(
               child: Container(
-                width: MediaQuery.of(context).size.width * .8,
+                width: MediaQuery.of(context).size.width * .85,
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.all(
                     Radius.circular(30),
@@ -180,8 +180,8 @@ class _ConfirmationDialogueState extends State<ConfirmationDialogue>
                       widget.title,
                       style: const TextStyle(
                         color: ThemeColors.black,
-                        fontSize: 36,
-                        fontWeight: FontWeight.w800,
+                        fontSize: 38,
+                        fontWeight: FontWeight.w700,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -190,7 +190,7 @@ class _ConfirmationDialogueState extends State<ConfirmationDialogue>
                       widget.bodyText,
                       style: const TextStyle(
                         color: ThemeColors.black,
-                        fontSize: 20,
+                        fontSize: 22,
                         fontWeight: FontWeight.w500,
                       ),
                       textAlign: TextAlign.center,
@@ -199,17 +199,23 @@ class _ConfirmationDialogueState extends State<ConfirmationDialogue>
                     if (widget.hasWrittenConfirmation) ...[
                       TextField(
                         controller: _confirmController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: "CONFIRM",
-                          border: UnderlineInputBorder(
+                          hintStyle: TextStyle(
+                            color: ThemeColors.black.withOpacity(.4),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                          ),
+                          border: const UnderlineInputBorder(
                             borderSide: BorderSide(color: ThemeColors.black),
                           ),
                         ),
                         style: const TextStyle(
                           color: ThemeColors.black,
                           fontWeight: FontWeight.w500,
-                          fontSize: 24,
+                          fontSize: 20,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 25),
                       AnimatedBuilder(
@@ -231,3 +237,58 @@ class _ConfirmationDialogueState extends State<ConfirmationDialogue>
     );
   }
 }
+
+
+/*
+
+TODO
+
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY
+╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 39 pixels on the bottom.
+
+The relevant error-causing widget was:
+  Column
+  Column:file:///Users/elijahsmith/Desktop/Projects.nosync/Vocabulary-Trainer-Ap
+  p/lib/pages/settings.dart:37:16
+
+The overflowing RenderFlex has an orientation of Axis.vertical.
+The edge of the RenderFlex that is overflowing has been marked in the rendering
+with a yellow and
+black striped pattern. This is usually caused by the contents being too big for
+the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the
+children of the
+RenderFlex to fit within the available space instead of being sized to their
+natural size.
+This is considered an error condition because it indicates that there is content
+that cannot be
+seen. If the content is legitimately bigger than the available space, consider
+clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container
+rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#0dbee relayoutBoundary=up2
+OVERFLOWING:
+  creator: Column ← Padding ← KeyedSubtree-[GlobalKey#4420d] ← _BodyBuilder ←
+  MediaQuery ←
+    LayoutId-[<_ScaffoldSlot.body>] ← CustomMultiChildLayout ← _ActionsScope ←
+    Actions ←
+    AnimatedBuilder ← DefaultTextStyle ← AnimatedDefaultTextStyle ← ⋯
+  parentData: offset=Offset(10.0, 10.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=391.4, 0.0<=h<=577.3)
+  size: Size(391.4, 577.3)
+  direction: vertical
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  verticalDirection: down
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════
+════════════════════
+
+
+
+*/

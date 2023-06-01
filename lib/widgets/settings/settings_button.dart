@@ -7,6 +7,7 @@ class SettingsButton extends StatefulWidget {
 
   final bool isSwitch;
   final bool initialSwitchToggleState;
+  final bool disabled;
   final void Function(bool)? onSwitchChange;
   final void Function()? onPress;
 
@@ -15,6 +16,7 @@ class SettingsButton extends StatefulWidget {
     required this.text,
     this.dangerous = false,
     this.isSwitch = false,
+    this.disabled = false,
     this.initialSwitchToggleState = false,
     this.onSwitchChange,
     this.onPress,
@@ -81,8 +83,10 @@ class _SettingsButtonState extends State<SettingsButton> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: widget.onPress ??
-              (widget.isSwitch ? () => handleSwitchChange(!toggle) : null),
+          onTap: widget.disabled
+              ? null
+              : (widget.onPress ??
+                  (widget.isSwitch ? () => handleSwitchChange(!toggle) : null)),
           child: Row(
             children: [
               const SizedBox(width: 20),

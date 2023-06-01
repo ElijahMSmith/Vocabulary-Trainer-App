@@ -3,6 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+/*
+TODOs
+
+- Still not super happy with the design on this widget. Something isn't quite right.
+- Find a better solution for the ordering so you don't have to scroll nearly as far.
+- Get a new list because this one sucks
+- Make a search feature? Maybe not yet but later?
+*/
+
 class LanguageData {
   final String name;
   final String nativeName;

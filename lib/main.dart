@@ -42,6 +42,7 @@ class Framework extends StatefulWidget {
 
 class _FrameworkState extends State<Framework> {
   DBHelper db = DBHelper();
+  SPHelper sp = SPHelper();
   bool appReady = false;
 
   late PageController _pageController;
@@ -63,8 +64,6 @@ class _FrameworkState extends State<Framework> {
   }
 
   Future<void> performAsyncSetup() async {
-    await SPHelper.initializeSP();
-
     await db.openDB();
     _currentTerms.addAll(await db.getAllTerms());
 

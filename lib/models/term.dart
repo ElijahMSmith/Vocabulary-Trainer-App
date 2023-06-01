@@ -4,6 +4,8 @@ import '../misc/util.dart';
 import '../misc/shared_preferences_helper.dart';
 
 class Term {
+  SPHelper sp = SPHelper();
+
   int? id;
 
   late final TermItem term;
@@ -16,8 +18,6 @@ class Term {
   int failedAttempts = 0;
   int successfulAttempts = 0;
 
-  List<int> schedule = SPHelper.schedule;
-
   int get daysExisted {
     DateTime nowStandard = standardizeTime(DateTime.now());
     int milliDiff =
@@ -27,6 +27,7 @@ class Term {
   }
 
   int get daysUntilNextCheck {
+    List<int> schedule = sp.schedule;
     if (scheduleIndex >= schedule.length) return -1;
 
     DateTime nextCheck = standardizeTime(
@@ -101,6 +102,8 @@ class Term {
   }
 
   String getMemoryStatusString() {
+    List<int> schedule = sp.schedule;
+    
     if (scheduleIndex >= schedule.length) return "Status: Learned!";
     if (scheduleIndex >= schedule.length / 2)
       return "Status: Long-Term Learning";

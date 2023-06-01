@@ -36,19 +36,18 @@ class _SearchState extends State<Search> {
 
     bool success = await db.deleteTerm(currentTerm!);
 
-    if (mounted && success)
+    if (mounted && success) {
       Toast.success("Successfully Deleted", context);
-    else if (mounted) Toast.error("Deletion Failed", context);
-
-    if (!success) return;
-
-    setState(() {
-      widget.currentTerms
-          .removeWhere((element) => element.id == currentTerm!.id);
-      currentTerm = null;
-      widget.updateTerms();
-      searchKey = UniqueKey();
-    });
+      setState(() {
+        widget.currentTerms
+            .removeWhere((element) => element.id == currentTerm!.id);
+        currentTerm = null;
+        widget.updateTerms();
+        searchKey = UniqueKey();
+      });
+    } else if (mounted) {
+      Toast.error("Deletion Failed", context);
+    }
   }
 
   void resetTermWait() async {
@@ -56,15 +55,14 @@ class _SearchState extends State<Search> {
 
     bool success = await db.resetWait(currentTerm!);
 
-    if (mounted && success)
+    if (mounted && success) {
       Toast.success("Successfully Reset", context);
-    else if (mounted) Toast.error("Reset Failed", context);
-
-    if (!success) return;
-
-    setState(() {
-      currentTerm!.scheduleIndex = 0;
-    });
+      setState(() {
+        currentTerm!.scheduleIndex = 0;
+      });
+    } else if (mounted) {
+      Toast.error("Reset Failed", context);
+    }
   }
 
   void updateCurrentTermInDB() async {
