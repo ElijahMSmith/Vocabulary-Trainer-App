@@ -37,7 +37,6 @@ class _SettingsState extends State<Settings> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // TODO: Implement handlers and initialSwitchToggleState
             SettingsButton(
               text: "Modify Practice Schedule",
               onPress: () {}, // TODO

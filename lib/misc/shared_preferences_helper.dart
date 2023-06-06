@@ -4,6 +4,12 @@ import 'package:vocab_trainer_app/misc/util.dart';
 
 final List<int> defaultSchedule = [0, 1, 3, 7, 7, 14, 30, 365];
 
+// TODO: Store the last used language pairing (update after submit to the last in the column)
+// When we create a card without any existing in the list, use this value as the default pairing
+
+// Update selector to include a scrollable listing of some of the most common choices or offer to enter manually
+// Keep a list of languages entered manually in SP
+
 class SPHelper {
   static final SPHelper _instance = SPHelper._internal();
   SharedPreferences? _prefs;
@@ -44,8 +50,11 @@ class SPHelper {
   Future<bool> updateSchedule(List<int> newSchedule) async {
     if (!isReady) return false;
 
-    return await _prefs!
+    bool success = await _prefs!
         .setStringList("schedule", intListToStringList(newSchedule));
+    if (success) _schedule = newSchedule;
+
+    return success;
   }
 
   bool get resetAfterMiss {
@@ -55,7 +64,10 @@ class SPHelper {
   Future<bool> updateResetAfterMiss(bool newVal) async {
     if (!isReady) return false;
 
-    return await _prefs!.setBool("resetAfterMiss", newVal);
+    bool success = await _prefs!.setBool("resetAfterMiss", newVal);
+    if (success) _resetAfterMiss = newVal;
+
+    return success;
   }
 
   bool get useDarkTheme {
@@ -65,6 +77,9 @@ class SPHelper {
   Future<bool> updateUseDarkTheme(bool newVal) async {
     if (!isReady) return false;
 
-    return await _prefs!.setBool("useDarkTheme", newVal);
+    bool success = await _prefs!.setBool("useDarkTheme", newVal);
+    if (success) _useDarkTheme = newVal;
+
+    return success;
   }
 }

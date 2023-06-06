@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/term.dart';
@@ -18,6 +20,28 @@ class _DisplayCardState extends State<DisplayCard> {
   TextEditingController defController = TextEditingController();
   int lastTermId = -1;
 
+  Timer? updateDelay;
+  bool lastSaveSuccess = true;
+
+  String getStatusText() {
+    return updateDelay != null && updateDelay!.isActive
+        ? "Saving..."
+        : "Saved!";
+  }
+
+  void resetTimer() {
+    if (updateDelay != null) updateDelay!.cancel();
+
+    setState(() {
+      updateDelay = Timer(const Duration(seconds: 1), () {
+        setState(() {
+          updateDelay = null;
+        });
+        widget.afterUpdate();
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -27,12 +51,12 @@ class _DisplayCardState extends State<DisplayCard> {
 
     termController.addListener(() {
       widget._data?.term.item = termController.value.text;
-      widget.afterUpdate();
+      resetTimer();
     });
 
     defController.addListener(() {
       widget._data?.definition.item = defController.value.text;
-      widget.afterUpdate();
+      resetTimer();
     });
   }
 
@@ -116,8 +140,9 @@ class _DisplayCardState extends State<DisplayCard> {
         ),
         color: ThemeColors.primary,
       ),
-      padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+      padding: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           buildInputLine(
             controller: termController,
@@ -128,7 +153,7 @@ class _DisplayCardState extends State<DisplayCard> {
                 setState(() {
                   data.term.language = newLanguage;
                 });
-                widget.afterUpdate();
+                resetTimer();
               }
             },
           ),
@@ -141,9 +166,19 @@ class _DisplayCardState extends State<DisplayCard> {
                 setState(() {
                   data.definition.language = newLanguage;
                 });
-                widget.afterUpdate();
+                resetTimer();
               }
             },
+          ),
+          const SizedBox(height: 15),
+          Text(
+            getStatusText(),
+            style: TextStyle(
+              color: ThemeColors.secondary.withOpacity(.4),
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+            ),
+            textAlign: TextAlign.start,
           ),
         ],
       ),

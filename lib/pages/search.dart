@@ -66,11 +66,10 @@ class _SearchState extends State<Search> {
   }
 
   void updateCurrentTermInDB() async {
-    // TODO: Wait for X seconds of no further calls before persisting to DB
     if (currentTerm == null) return;
 
     bool success = await db.updateTerm(currentTerm!);
-    if (!success) return;
+    if (!success && mounted) Toast.error("Couldn't Save Edits", context);
   }
 
   @override
