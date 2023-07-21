@@ -88,13 +88,13 @@ class Term {
 
   String _formatDaysString(int days) {
     if (days >= 365) {
-      int years = (days / 365) as int;
+      int years = (days / 365).round();
       return "$years Year${years != 1 ? "s" : ""}";
     } else if (days >= 31) {
-      int months = (days / 31) as int;
+      int months = (days / 31).round();
       return "$months Month${months != 1 ? "s" : ""}";
     } else if (days >= 7) {
-      int weeks = (days / 7) as int;
+      int weeks = (days / 7).round();
       return "$weeks Week${weeks != 1 ? "s" : ""}";
     } else {
       return "$days Day${days != 1 ? "s" : ""}";
@@ -103,7 +103,7 @@ class Term {
 
   String getMemoryStatusString() {
     List<int> schedule = sp.schedule;
-    
+
     if (scheduleIndex >= schedule.length) return "Status: Learned!";
     if (scheduleIndex >= schedule.length / 2)
       return "Status: Long-Term Learning";

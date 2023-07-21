@@ -24,9 +24,11 @@ class _DisplayCardState extends State<DisplayCard> {
   bool lastSaveSuccess = true;
 
   String getStatusText() {
-    return updateDelay != null && updateDelay!.isActive
-        ? "Saving..."
-        : "Saved!";
+    return widget._data == null
+        ? "Nothing Selected"
+        : (updateDelay != null && updateDelay!.isActive
+            ? "Saving..."
+            : "Saved!");
   }
 
   void resetTimer() {

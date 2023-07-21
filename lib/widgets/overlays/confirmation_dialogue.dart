@@ -185,7 +185,7 @@ class _ConfirmationDialogueState extends State<ConfirmationDialogue>
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 45),
+                    const SizedBox(height: 25),
                     Text(
                       widget.bodyText,
                       style: const TextStyle(

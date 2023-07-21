@@ -2,19 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/language_data.dart';
 
-// TODO: replace
-const defaultLanguageList = [
-  "English",
-  "Spanish",
-  "French",
-  "German",
-  "Portuguese",
-  "Russian",
-  "Chinese (Simplified)",
-  "Chinese (Traditional)",
-  "Japanese"
-];
-
 // ignore: must_be_immutable
 class LanguageSelector extends StatefulWidget {
   final LanguageCollection allLanguages = LanguageCollection();

@@ -1,13 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/misc/util.dart';
-
-final List<int> defaultSchedule = [0, 1, 3, 7, 7, 14, 30, 365];
 
 // TODO: Store the last used language pairing (update after submit to the last in the column)
 // When we create a card without any existing in the list, use this value as the default pairing
 
-// Update selector to include a scrollable listing of some of the most common choices or offer to enter manually
+// TODO: Update selector to include a scrollable listing of some of the most common choices or offer to enter manually
 // Keep a list of languages entered manually in SP
 
 class SPHelper {

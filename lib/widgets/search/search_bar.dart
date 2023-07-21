@@ -17,10 +17,6 @@ class _SearchBarState extends State<TermSearchBar> {
 
   final GlobalKey _autocompleteKey = GlobalKey();
 
-  void _onSearchSubmit() {
-    // TODO: Get something from the list and pass to onSubmit
-  }
-
   @override
   void initState() {
     super.initState();
