@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:retry/retry.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/misc/shared_preferences_helper.dart';
+import 'package:vocab_trainer_app/models/term_list_model.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/pages/enter.dart';
 import 'package:vocab_trainer_app/pages/practice.dart';
 import 'package:vocab_trainer_app/pages/search.dart';
 import 'package:vocab_trainer_app/pages/settings.dart';
-import 'package:vocab_trainer_app/widgets/miscellaneous/splash.dart';
 
 void main() {
   runApp(const App());
@@ -21,14 +23,17 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    return MaterialApp(
-      title: 'Vocabulary Trainer App', // TODO: name change
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: "Jost",
-        fontFamilyFallback: const ["Arial"],
+    return ChangeNotifierProvider(
+      create: (context) => TermListModel(),
+      child: MaterialApp(
+        title: 'Vocabulary Trainer App', // TODO: name change
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          fontFamily: "Jost",
+          fontFamilyFallback: const ["Arial"],
+        ),
+        home: const Framework(),
       ),
-      home: const Framework(),
     );
   }
 }
@@ -48,12 +53,9 @@ class _FrameworkState extends State<Framework> {
   late PageController _pageController;
   int _pageIndex = 1;
 
-  List<Term> _currentTerms = [];
-
   @override
   void initState() {
     _pageController = PageController(initialPage: _pageIndex, keepPage: true);
-    performAsyncSetup();
     super.initState();
   }
 
@@ -63,26 +65,11 @@ class _FrameworkState extends State<Framework> {
     super.dispose();
   }
 
-  Future<void> performAsyncSetup() async {
-    await db.openDB();
-    _currentTerms.addAll(await db.getAllTerms());
-
-    setState(() {
-      appReady = true;
-    });
-  }
-
   void _handleTap(int index) {
     setState(() {
       _pageIndex = index;
       _pageController.animateToPage(index,
           duration: const Duration(milliseconds: 350), curve: Curves.easeOut);
-    });
-  }
-
-  void _updateCurrentTerms({List<Term>? newTermsList}) {
-    setState(() {
-      if (newTermsList != null) _currentTerms = newTermsList;
     });
   }
 
@@ -105,7 +92,6 @@ class _FrameworkState extends State<Framework> {
 
   @override
   Widget build(BuildContext context) {
-    if (!appReady) return const SplashScreen();
     return Scaffold(
       backgroundColor: ThemeColors.accent,
       body: SizedBox.expand(
@@ -114,14 +100,11 @@ class _FrameworkState extends State<Framework> {
           onPageChanged: (index) {
             setState(() => _pageIndex = index);
           },
-          children: [
-            Enter(
-                currentTerms: _currentTerms, updateTerms: _updateCurrentTerms),
-            Home(currentTerms: _currentTerms, updateTerms: _updateCurrentTerms),
-            Search(
-                currentTerms: _currentTerms, updateTerms: _updateCurrentTerms),
-            Settings(
-                currentTerms: _currentTerms, updateTerms: _updateCurrentTerms),
+          children: const [
+            Enter(),
+            Practice(),
+            Search(),
+            Settings(),
           ],
         ),
       ),

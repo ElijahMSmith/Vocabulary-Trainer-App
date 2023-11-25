@@ -5,22 +5,28 @@ import 'package:vocab_trainer_app/models/term.dart';
 final List<int> defaultSchedule = [1, 1, 3, 7, 7, 14, 30, 365];
 
 class DBHelper {
-  static Database? _db;
+  static final DBHelper _instance = DBHelper._internal();
+  Database? _db;
+
+  factory DBHelper() {
+    return _instance;
+  }
+
+  DBHelper._internal() {
+    getDatabasesPath().then((initPath) {
+      openDatabase(
+        join(initPath, 'terms.db'),
+        version: 1,
+        onCreate: (db, version) async {
+          await db.execute(
+              'CREATE TABLE Term(id INTEGER PRIMARY KEY, termItem TEXT, termLanguage TEXT, definitionItem TEXT, definitionLanguage TEXT, created INTEGER, lastChecked INTEGER, scheduleIndex INTEGER, successfulAttempts INTEGER, failedAttempts INTEGER)');
+        },
+      ).then((db) => _db = db);
+    });
+  }
 
   bool get isReady {
     return _db != null;
-  }
-
-  Future<void> openDB() async {
-    String initPath = await getDatabasesPath();
-    _db = await openDatabase(
-      join(initPath, 'terms.db'),
-      version: 1,
-      onCreate: (db, version) async {
-        await db.execute(
-            'CREATE TABLE Term(id INTEGER PRIMARY KEY, termItem TEXT, termLanguage TEXT, definitionItem TEXT, definitionLanguage TEXT, created INTEGER, lastChecked INTEGER, scheduleIndex INTEGER, successfulAttempts INTEGER, failedAttempts INTEGER)');
-      },
-    );
   }
 
   Future<bool> insertNewTerms(List<Term> newTerms) async {
@@ -91,4 +97,16 @@ class DBHelper {
     await _db!.rawDelete('DELETE FROM Term');
     return true;
   }
+
+  Future<int> getNextId() async {
+    if (!isReady) return -1;
+    List<Map<String, Object?>> items =
+        await _db!.rawQuery('SELECT id FROM test ORDER BY id DESC LIMIT 1');
+    return items.isNotEmpty ? items[0]["id"] as int : 0;
+  }
+}
+
+class DatabaseNotReadyException implements Exception {
+  String cause;
+  DatabaseNotReadyException(this.cause);
 }

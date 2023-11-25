@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
+import 'package:vocab_trainer_app/misc/shared_preferences_helper.dart';
+import 'package:vocab_trainer_app/models/term_list_model.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/widgets/miscellaneous/app_bar.dart';
 import 'package:vocab_trainer_app/widgets/enter/add_button.dart';
@@ -11,11 +14,7 @@ import 'package:vocab_trainer_app/widgets/enter/term_input_card.dart';
 import 'package:vocab_trainer_app/widgets/miscellaneous/toast.dart';
 
 class Enter extends StatefulWidget {
-  final List<Term> currentTerms;
-  final void Function({List<Term>? newTermsList}) updateTerms;
-
-  const Enter(
-      {super.key, required this.currentTerms, required this.updateTerms});
+  const Enter({super.key});
 
   @override
   State<Enter> createState() => _EnterState();
@@ -24,8 +23,9 @@ class Enter extends StatefulWidget {
 class _EnterState extends State<Enter> {
   final ScrollController _listScrollController = ScrollController();
   GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-  final DBHelper db = DBHelper();
 
+  final DBHelper db = DBHelper();
+  final SPHelper sp = SPHelper();
   final int ANIM_DURATION = 350;
   final List<TermWithHint> _allTerms = [];
 
@@ -49,7 +49,8 @@ class _EnterState extends State<Enter> {
     }
 
     db.insertNewTerms(nonEmptyTerms);
-    widget.currentTerms.addAll(nonEmptyTerms);
+    Provider.of<TermListModel>(context).addAll(nonEmptyTerms);
+    Toast.success("Created Terms!", context);
 
     setState(() {
       for (int i = _allTerms.length - 1; i >= 0; i--) {
@@ -61,9 +62,6 @@ class _EnterState extends State<Enter> {
         );
       }
     });
-
-    widget.updateTerms();
-    Toast.success("Created Terms!", context);
   }
 
   void _deleteTerm(int index) {
@@ -81,6 +79,9 @@ class _EnterState extends State<Enter> {
       TermWithHint last = _allTerms.last;
       newTerm.term.language = last.term.term.language;
       newTerm.definition.language = last.term.definition.language;
+    } else {
+      newTerm.term.language = sp.defaultTermLanguage;
+      newTerm.definition.language = sp.defaultDefinitionLanguage;
     }
 
     HintOption hint = allHints.elementAt(Random().nextInt(allHints.length));
@@ -103,6 +104,7 @@ class _EnterState extends State<Enter> {
   }
 
   void _notifyStateUpdate() {
+    // TODO: This feels gross and shouldn't be necessary
     setState(() {});
   }
 

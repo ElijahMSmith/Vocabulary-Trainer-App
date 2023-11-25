@@ -1,12 +1,17 @@
 import 'dart:math';
 
+import 'package:vocab_trainer_app/misc/db_helper.dart';
+
 import '../misc/util.dart';
 import '../misc/shared_preferences_helper.dart';
 
 class Term {
   SPHelper sp = SPHelper();
+  DBHelper db = DBHelper();
 
-  int? id;
+  static int nextId = -1;
+
+  late int id;
 
   late final TermItem term;
   late final TermItem definition;
@@ -18,29 +23,10 @@ class Term {
   int failedAttempts = 0;
   int successfulAttempts = 0;
 
-  int get daysExisted {
-    DateTime nowStandard = standardizeTime(DateTime.now());
-    int milliDiff =
-        nowStandard.millisecondsSinceEpoch - created.millisecondsSinceEpoch;
-    double daysDiff = milliDiff / 1000 / 60 / 60 / 24;
-    return daysDiff.floor();
-  }
-
-  int get daysUntilNextCheck {
-    List<int> schedule = sp.schedule;
-    if (scheduleIndex >= schedule.length) return -1;
-
-    DateTime nextCheck = standardizeTime(
-        lastChecked.add(Duration(days: schedule[scheduleIndex])));
-    DateTime nowStandard = standardizeTime(DateTime.now());
-
-    int milliDiff =
-        nextCheck.millisecondsSinceEpoch - nowStandard.millisecondsSinceEpoch;
-    double daysDiff = milliDiff / 1000 / 60 / 60 / 24;
-    return max(daysDiff.floor(), 0);
-  }
-
   Term.blank() {
+    id = nextId;
+    nextId++;
+
     term = TermItem.blank();
     definition = TermItem.blank();
 
@@ -78,11 +64,33 @@ class Term {
     };
   }
 
-  String getAgeString() {
+  int get daysExisted {
+    DateTime nowStandard = standardizeTime(DateTime.now());
+    int milliDiff =
+        nowStandard.millisecondsSinceEpoch - created.millisecondsSinceEpoch;
+    double daysDiff = milliDiff / 1000 / 60 / 60 / 24;
+    return daysDiff.floor();
+  }
+
+  int get daysUntilNextCheck {
+    List<int> schedule = sp.schedule;
+    if (scheduleIndex >= schedule.length) return -1;
+
+    DateTime nextCheck = standardizeTime(
+        lastChecked.add(Duration(days: schedule[scheduleIndex])));
+    DateTime nowStandard = standardizeTime(DateTime.now());
+
+    int milliDiff =
+        nextCheck.millisecondsSinceEpoch - nowStandard.millisecondsSinceEpoch;
+    double daysDiff = milliDiff / 1000 / 60 / 60 / 24;
+    return max(daysDiff.floor(), 0);
+  }
+
+  String get ageString {
     return _formatDaysString(daysExisted);
   }
 
-  String getNextCheckString() {
+  String get nextCheckString {
     return _formatDaysString(daysUntilNextCheck);
   }
 
@@ -101,7 +109,7 @@ class Term {
     }
   }
 
-  String getMemoryStatusString() {
+  String get memoryStatusString {
     List<int> schedule = sp.schedule;
 
     if (scheduleIndex >= schedule.length) return "Status: Learned!";
@@ -111,7 +119,7 @@ class Term {
       return "Status: Short-Term Learning";
   }
 
-  String getDisplayString() {
+  String get displayString {
     // For using in search completion/other app locations, does not include id
     return "${term.item} (${term.language}): ${definition.item} (${definition.language})";
   }
@@ -121,6 +129,16 @@ class Term {
     // For printing/debugging, includes id that getDisplayString does not
     return "($id) ${term.item} (${term.language}) - ${definition.item} (${definition.language})";
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is Term &&
+      id == other.id &&
+      definition == other.definition &&
+      term == other.term;
+
+  @override
+  int get hashCode => id;
 }
 
 class TermItem {
@@ -130,6 +148,8 @@ class TermItem {
   TermItem(this.item, this.language);
 
   TermItem.blank();
+
+  // TODO: Define equals and hash here
 }
 
 class HintOption {
@@ -142,6 +162,8 @@ class HintOption {
   String toString() {
     return "\tHint: $term - $definition";
   }
+
+  // TODO: Define equals and hash here
 }
 
 class TermWithHint {
@@ -153,6 +175,8 @@ class TermWithHint {
   TermWithHint.blank()
       : term = Term.blank(),
         hint = allHints.elementAt(Random().nextInt(allHints.length));
+
+        // TODO: Define equals and hash here
 }
 
 final List<HintOption> allHints = [

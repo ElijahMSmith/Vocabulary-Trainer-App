@@ -3,9 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/misc/util.dart';
 
-// TODO: Store the last used language pairing (update after submit to the last in the column)
-// When we create a card without any existing in the list, use this value as the default pairing
-
 // TODO: Update selector to include a scrollable listing of some of the most common choices or offer to enter manually
 // Keep a list of languages entered manually in SP
 
@@ -16,6 +13,8 @@ class SPHelper {
   List<int> _schedule = defaultSchedule;
   bool _resetAfterMiss = true;
   bool _useDarkTheme = true;
+  String _defaultTermLanguage = "English";
+  String _defaultDefinitionLanguage = "English";
 
   factory SPHelper() {
     return _instance;
@@ -32,6 +31,9 @@ class SPHelper {
 
       _resetAfterMiss = sp.getBool("resetAfterMiss") ?? true;
       _useDarkTheme = sp.getBool("useDarkTheme") ?? true;
+      _defaultTermLanguage = sp.getString("defaultTermLanguage") ?? "English";
+      _defaultDefinitionLanguage =
+          sp.getString("defaultDefinitionLanguage") ?? "English";
 
       _prefs = sp;
       debugPrint("Shared Preferences Data Retrieved!");
@@ -80,5 +82,30 @@ class SPHelper {
     if (success) _useDarkTheme = newVal;
 
     return success;
+  }
+
+  String get defaultTermLanguage {
+    return _defaultTermLanguage;
+  }
+
+  String get defaultDefinitionLanguage {
+    return _defaultDefinitionLanguage;
+  }
+
+  Future<bool> updateMostRecentTermLanguages(
+    String newTermLanguage,
+    String newDefinitionLanguage,
+  ) async {
+    if (!isReady) return false;
+
+    bool termSuccess =
+        await _prefs!.setString("defaultTermLanguage", newTermLanguage);
+    if (termSuccess) _defaultTermLanguage = newTermLanguage;
+
+    bool defSuccess = await _prefs!
+        .setString("defaultDefinitionLanguage", newDefinitionLanguage);
+    if (defSuccess) _defaultDefinitionLanguage = newDefinitionLanguage;
+
+    return termSuccess && defSuccess;
   }
 }

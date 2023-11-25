@@ -3,10 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 
 class ReviewBubble extends StatelessWidget {
-  final int terms;
+  final int termCount;
   final VoidCallback onPress;
 
-  const ReviewBubble({super.key, required this.terms, required this.onPress});
+  const ReviewBubble(
+      {super.key, required this.termCount, required this.onPress});
 
   Widget buildReviewButton() {
     return TextButton.icon(
@@ -49,7 +50,7 @@ class ReviewBubble extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(terms > 0 ? "Review $terms Terms!" : "No Pending Terms!",
+          Text(termCount > 0 ? "Review $termCount Terms!" : "No Pending Terms!",
               style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w500,
@@ -66,13 +67,13 @@ class ReviewBubble extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      terms > 0 ? "You got this." : "Nice work.",
+                      termCount > 0 ? "You got this." : "Nice work.",
                       style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w300,
                           color: Colors.white),
                     ),
-                    terms > 0
+                    termCount > 0
                         ? buildReviewButton()
                         : const Text(
                             "See You Tomorrow!",

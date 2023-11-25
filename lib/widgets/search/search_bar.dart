@@ -59,7 +59,7 @@ class _SearchBarState extends State<TermSearchBar> {
                     .toLowerCase()
                     .contains(currentText.text.toLowerCase()));
           },
-          displayStringForOption: (term) => term.getDisplayString(),
+          displayStringForOption: (term) => term.displayString,
           fieldViewBuilder:
               (context, textEditingController, focusNode, onFieldSubmitted) {
             return TextField(
@@ -123,7 +123,7 @@ class _SearchBarState extends State<TermSearchBar> {
                     children: options.map((term) {
                       return ListTile(
                         title: Text(
-                          term.getDisplayString(),
+                          term.displayString,
                           style: const TextStyle(
                             fontSize: 14,
                             color: ThemeColors.black,
@@ -131,7 +131,7 @@ class _SearchBarState extends State<TermSearchBar> {
                           ),
                         ),
                         onTap: () {
-                          _controller.text = term.getDisplayString();
+                          _controller.text = term.displayString;
                           _focusNode.unfocus();
                           widget.onSubmit(term);
                         },
