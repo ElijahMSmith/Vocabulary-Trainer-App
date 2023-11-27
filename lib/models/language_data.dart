@@ -30,12 +30,12 @@ class LanguageCollection {
   static final LanguageCollection _instance = LanguageCollection._internal();
   final List<LanguageData> _allData = [];
 
+  // Loaded with other resources in the main widget before the app is usable
   factory LanguageCollection() {
     return _instance;
   }
 
   LanguageCollection._internal() {
-    // Initialization Logic
     rootBundle.loadString('assets/loads/languages.json').then((response) {
       Map<String, dynamic> data = json.decode(response) as Map<String, dynamic>;
       data.forEach((key, value) {

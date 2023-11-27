@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/misc/shared_preferences_helper.dart';
-import 'package:vocab_trainer_app/models/term_list_model.dart';
+import 'package:vocab_trainer_app/models/term_list.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/widgets/miscellaneous/app_bar.dart';
 import 'package:vocab_trainer_app/widgets/enter/add_button.dart';

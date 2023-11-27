@@ -9,8 +9,8 @@ class Term {
   SPHelper sp = SPHelper();
   DBHelper db = DBHelper();
 
+  // Initialize when DB is ready in main component setup
   static int nextId = -1;
-
   late int id;
 
   late final TermItem term;
@@ -24,8 +24,7 @@ class Term {
   int successfulAttempts = 0;
 
   Term.blank() {
-    id = nextId;
-    nextId++;
+    id = nextId++;
 
     term = TermItem.blank();
     definition = TermItem.blank();
@@ -52,6 +51,7 @@ class Term {
 
   Map<String, Object> toMap() {
     return {
+      "id": id,
       "termItem": term.item,
       "termLanguage": term.language,
       "definitionItem": definition.item,
@@ -131,11 +131,7 @@ class Term {
   }
 
   @override
-  bool operator ==(Object other) =>
-      other is Term &&
-      id == other.id &&
-      definition == other.definition &&
-      term == other.term;
+  bool operator ==(Object other) => other is Term && id == other.id;
 
   @override
   int get hashCode => id;
@@ -149,7 +145,12 @@ class TermItem {
 
   TermItem.blank();
 
-  // TODO: Define equals and hash here
+  @override
+  bool operator ==(Object other) =>
+      other is TermItem && item == other.item && language == other.language;
+
+  @override
+  int get hashCode => "$item+$language".hashCode;
 }
 
 class HintOption {
@@ -163,7 +164,14 @@ class HintOption {
     return "\tHint: $term - $definition";
   }
 
-  // TODO: Define equals and hash here
+  @override
+  bool operator ==(Object other) =>
+      other is HintOption &&
+      term == other.term &&
+      definition == other.definition;
+
+  @override
+  int get hashCode => toString().hashCode;
 }
 
 class TermWithHint {
@@ -176,7 +184,12 @@ class TermWithHint {
       : term = Term.blank(),
         hint = allHints.elementAt(Random().nextInt(allHints.length));
 
-        // TODO: Define equals and hash here
+  @override
+  bool operator ==(Object other) =>
+      other is TermWithHint && term.id == other.term.id;
+
+  @override
+  int get hashCode => term.id;
 }
 
 final List<HintOption> allHints = [

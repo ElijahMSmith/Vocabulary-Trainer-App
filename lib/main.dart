@@ -1,16 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:retry/retry.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/misc/shared_preferences_helper.dart';
-import 'package:vocab_trainer_app/models/term_list_model.dart';
+import 'package:vocab_trainer_app/models/language_data.dart';
+import 'package:vocab_trainer_app/models/term_list.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/pages/enter.dart';
 import 'package:vocab_trainer_app/pages/practice.dart';
 import 'package:vocab_trainer_app/pages/search.dart';
 import 'package:vocab_trainer_app/pages/settings.dart';
+import 'package:vocab_trainer_app/widgets/miscellaneous/splash.dart';
 
 void main() {
   runApp(const App());
@@ -45,10 +48,12 @@ class Framework extends StatefulWidget {
   State<Framework> createState() => _FrameworkState();
 }
 
+enum AppState { READY, LOADING, FAILED }
+
 class _FrameworkState extends State<Framework> {
   DBHelper db = DBHelper();
   SPHelper sp = SPHelper();
-  bool appReady = false;
+  AppState loadingState = AppState.LOADING;
 
   late PageController _pageController;
   int _pageIndex = 1;
@@ -56,6 +61,7 @@ class _FrameworkState extends State<Framework> {
   @override
   void initState() {
     _pageController = PageController(initialPage: _pageIndex, keepPage: true);
+    loadResources();
     super.initState();
   }
 
@@ -63,6 +69,26 @@ class _FrameworkState extends State<Framework> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  void loadResources() async {
+    int start = DateTime.now().millisecondsSinceEpoch;
+    int TIMEOUT_MS = 10000;
+    // This doesn't seem to be running fast, is this still on the main thread which is causing problems?
+    // Why does this exit the while loop anyways?
+    while (DateTime.now().millisecondsSinceEpoch - start < TIMEOUT_MS) {
+      if (db.isReady && sp.isReady) {
+        Term.nextId = await db.getNextId();
+        LanguageCollection _ = LanguageCollection();
+        debugPrint("Successfully loaded resources!");
+        setState(() {
+          loadingState = AppState.READY;
+        });
+        return;
+      }
+    }
+    debugPrint("Failed to load resources");
+    loadingState = AppState.FAILED;
   }
 
   void _handleTap(int index) {
@@ -92,6 +118,7 @@ class _FrameworkState extends State<Framework> {
 
   @override
   Widget build(BuildContext context) {
+    if (loadingState != AppState.READY) return SplashScreen(loadingState);
     return Scaffold(
       backgroundColor: ThemeColors.accent,
       body: SizedBox.expand(

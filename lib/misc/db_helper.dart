@@ -101,7 +101,7 @@ class DBHelper {
   Future<int> getNextId() async {
     if (!isReady) return -1;
     List<Map<String, Object?>> items =
-        await _db!.rawQuery('SELECT id FROM test ORDER BY id DESC LIMIT 1');
+        await _db!.rawQuery('SELECT id FROM Term ORDER BY id DESC LIMIT 1');
     return items.isNotEmpty ? items[0]["id"] as int : 0;
   }
 }

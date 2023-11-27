@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
-import 'package:vocab_trainer_app/models/term_list_model.dart';
+import 'package:vocab_trainer_app/models/term_list.dart';
 import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/widgets/miscellaneous/app_bar.dart';
 import 'package:vocab_trainer_app/widgets/practice/mode_button.dart';
