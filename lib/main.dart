@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/misc/shared_preferences_helper.dart';
+import 'package:vocab_trainer_app/models/language_data.dart';
 import 'package:vocab_trainer_app/models/term_list.dart';
 import 'package:vocab_trainer_app/pages/enter.dart';
 import 'package:vocab_trainer_app/pages/practice.dart';
@@ -48,6 +49,8 @@ enum AppState { READY, LOADING, FAILED }
 class _FrameworkState extends State<Framework> {
   DBHelper db = DBHelper();
   SPHelper sp = SPHelper();
+  LanguageCollection languages = LanguageCollection();
+
   AppState loadingState = AppState.LOADING;
 
   late PageController _pageController;
@@ -82,6 +85,9 @@ class _FrameworkState extends State<Framework> {
 
     await db.initialize();
     debugPrint("Loaded DB");
+
+    await languages.initialize();
+    debugPrint("Loaded language data");
 
     timerOuter.cancel();
 

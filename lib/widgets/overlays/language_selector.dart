@@ -8,25 +8,25 @@ class LanguageSelector extends StatefulWidget {
 
   final String? currentSelection;
   final void Function(String newLanguage) onLanguageSelect;
-  OverlayEntry? overlayRef;
+  OverlayEntry? _overlayRef;
 
   LanguageSelector(
       {super.key, this.currentSelection, required this.onLanguageSelect});
 
   void show(BuildContext context) {
     OverlayState overlayState = Overlay.of(context);
-    overlayRef = OverlayEntry(
+    _overlayRef = OverlayEntry(
       builder: (context) {
         return SafeArea(child: this);
       },
     );
-    overlayState.insert(overlayRef!);
+    overlayState.insert(_overlayRef!);
   }
 
   void dismissOverlay() {
-    if (overlayRef != null) {
-      overlayRef!.remove();
-      overlayRef = null;
+    if (_overlayRef != null) {
+      _overlayRef!.remove();
+      _overlayRef = null;
     }
   }
 
@@ -38,6 +38,8 @@ class _LanguageSelectorState extends State<LanguageSelector>
     with TickerProviderStateMixin {
   late AnimationController _opacityAnimationController;
   late Animation<double> _opacityAnimation;
+
+  final double TILE_HEIGHT = 50;
 
   @override
   void initState() {
@@ -60,6 +62,10 @@ class _LanguageSelectorState extends State<LanguageSelector>
     super.dispose();
   }
 
+  // TODO: Add a search bar for filtering languages over scrolling
+  // TODO: Group recently used at the top and then ALL below that
+  // TODO: Make all languages one line
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +80,7 @@ class _LanguageSelectorState extends State<LanguageSelector>
               onDismiss: () {
                 _opacityAnimationController
                     .reverse()
-                    .whenComplete(() => widget.overlayRef?.remove());
+                    .whenComplete(() => widget._overlayRef?.remove());
               },
             ),
             Center(
@@ -130,31 +136,43 @@ class _LanguageSelectorState extends State<LanguageSelector>
                               Radius.circular(15),
                             ),
                             child: ListView(
+                              controller: ScrollController(
+                                  initialScrollOffset: widget
+                                              .currentSelection !=
+                                          null
+                                      ? (widget.allLanguages.indexOfName(
+                                              widget.currentSelection!) *
+                                          TILE_HEIGHT) // TODO: This doesn't work
+                                      : 0),
                               children: [
-                                ...widget.allLanguages.list
+                                ...widget.allLanguages.data
                                     .map<Widget>(
-                                      (languageData) => Material(
-                                        color: widget.currentSelection ==
-                                                languageData.name
-                                            ? ThemeColors.secondary
-                                            : ThemeColors.primary,
-                                        child: ListTile(
-                                          title: Text(
-                                            languageData.name,
-                                            style: TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.w300,
-                                              color: widget.currentSelection ==
-                                                      languageData.name
-                                                  ? ThemeColors.primary
-                                                  : ThemeColors.black,
+                                      (languageData) => SizedBox(
+                                        height: TILE_HEIGHT,
+                                        child: Material(
+                                          color: widget.currentSelection ==
+                                                  languageData.name
+                                              ? ThemeColors.secondary
+                                              : ThemeColors.primary,
+                                          child: ListTile(
+                                            title: Text(
+                                              languageData.name,
+                                              style: TextStyle(
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.w300,
+                                                color:
+                                                    widget.currentSelection ==
+                                                            languageData.name
+                                                        ? ThemeColors.primary
+                                                        : ThemeColors.black,
+                                              ),
                                             ),
+                                            onTap: () {
+                                              widget.onLanguageSelect(
+                                                  languageData.name);
+                                              widget._overlayRef?.remove();
+                                            },
                                           ),
-                                          onTap: () {
-                                            widget.onLanguageSelect(
-                                                languageData.name);
-                                            widget.overlayRef?.remove();
-                                          },
                                         ),
                                       ),
                                     )
