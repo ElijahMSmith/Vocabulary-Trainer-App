@@ -6,9 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/misc/shared_preferences_helper.dart';
-import 'package:vocab_trainer_app/models/language_data.dart';
 import 'package:vocab_trainer_app/models/term_list.dart';
-import 'package:vocab_trainer_app/models/term.dart';
 import 'package:vocab_trainer_app/pages/enter.dart';
 import 'package:vocab_trainer_app/pages/practice.dart';
 import 'package:vocab_trainer_app/pages/search.dart';
@@ -26,17 +24,14 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    return ChangeNotifierProvider(
-      create: (context) => TermListModel(),
-      child: MaterialApp(
-        title: 'Vocabulary Trainer App', // TODO: name change
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          fontFamily: "Jost",
-          fontFamilyFallback: const ["Arial"],
-        ),
-        home: const Framework(),
+    return MaterialApp(
+      title: 'Vocabulary Trainer App', // TODO: name change
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: "Jost",
+        fontFamilyFallback: const ["Arial"],
       ),
+      home: const Framework(),
     );
   }
 }
@@ -60,35 +55,39 @@ class _FrameworkState extends State<Framework> {
 
   @override
   void initState() {
+    super.initState();
+
     _pageController = PageController(initialPage: _pageIndex, keepPage: true);
     loadResources();
-    super.initState();
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
     super.dispose();
+    _pageController.dispose();
   }
 
   void loadResources() async {
-    int start = DateTime.now().millisecondsSinceEpoch;
-    int TIMEOUT_MS = 10000;
-    // This doesn't seem to be running fast, is this still on the main thread which is causing problems?
-    // Why does this exit the while loop anyways?
-    while (DateTime.now().millisecondsSinceEpoch - start < TIMEOUT_MS) {
-      if (db.isReady && sp.isReady) {
-        Term.nextId = await db.getNextId();
-        LanguageCollection _ = LanguageCollection();
-        debugPrint("Successfully loaded resources!");
-        setState(() {
-          loadingState = AppState.READY;
-        });
-        return;
-      }
-    }
-    debugPrint("Failed to load resources");
-    loadingState = AppState.FAILED;
+    const LOADING_TIMEOUT_MS = 10000;
+
+    Timer timerOuter =
+        Timer(const Duration(milliseconds: LOADING_TIMEOUT_MS), () {
+      setState(() {
+        loadingState = AppState.FAILED;
+      });
+    });
+
+    await sp.initialize();
+    debugPrint("Loaded SP");
+
+    await db.initialize();
+    debugPrint("Loaded DB");
+
+    timerOuter.cancel();
+
+    setState(() {
+      loadingState = AppState.READY;
+    });
   }
 
   void _handleTap(int index) {
@@ -119,52 +118,56 @@ class _FrameworkState extends State<Framework> {
   @override
   Widget build(BuildContext context) {
     if (loadingState != AppState.READY) return SplashScreen(loadingState);
-    return Scaffold(
-      backgroundColor: ThemeColors.accent,
-      body: SizedBox.expand(
-        child: PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() => _pageIndex = index);
-          },
-          children: const [
-            Enter(),
-            Practice(),
-            Search(),
-            Settings(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topRight: Radius.circular(20),
-            topLeft: Radius.circular(20),
-          ),
-          boxShadow: [
-            BoxShadow(blurRadius: 5, color: Colors.black.withOpacity(.25))
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topRight: Radius.circular(20),
-            topLeft: Radius.circular(20),
-          ),
-          child: BottomNavigationBar(
-            items: <BottomNavigationBarItem>[
-              createNavigationBarItem(Icons.add_circle_rounded, "Enter", 0),
-              createNavigationBarItem(
-                  Icons.fitness_center_rounded, "Practice", 1),
-              createNavigationBarItem(Icons.search_rounded, "Search", 2),
-              createNavigationBarItem(Icons.settings_rounded, "Settings", 3),
+
+    return ChangeNotifierProvider(
+      create: (context) => TermListModel(),
+      child: Scaffold(
+        backgroundColor: ThemeColors.accent,
+        body: SizedBox.expand(
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() => _pageIndex = index);
+            },
+            children: const [
+              Enter(),
+              Practice(),
+              Search(),
+              Settings(),
             ],
-            type: BottomNavigationBarType.fixed,
-            onTap: _handleTap,
-            currentIndex: _pageIndex,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            selectedItemColor: ThemeColors.secondary,
-            unselectedItemColor: ThemeColors.black.withOpacity(.2),
+          ),
+        ),
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(20),
+              topLeft: Radius.circular(20),
+            ),
+            boxShadow: [
+              BoxShadow(blurRadius: 5, color: Colors.black.withOpacity(.25))
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(20),
+              topLeft: Radius.circular(20),
+            ),
+            child: BottomNavigationBar(
+              items: <BottomNavigationBarItem>[
+                createNavigationBarItem(Icons.add_circle_rounded, "Enter", 0),
+                createNavigationBarItem(
+                    Icons.fitness_center_rounded, "Practice", 1),
+                createNavigationBarItem(Icons.search_rounded, "Search", 2),
+                createNavigationBarItem(Icons.settings_rounded, "Settings", 3),
+              ],
+              type: BottomNavigationBarType.fixed,
+              onTap: _handleTap,
+              currentIndex: _pageIndex,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              selectedItemColor: ThemeColors.secondary,
+              unselectedItemColor: ThemeColors.black.withOpacity(.2),
+            ),
           ),
         ),
       ),

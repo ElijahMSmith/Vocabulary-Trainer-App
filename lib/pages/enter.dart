@@ -49,7 +49,7 @@ class _EnterState extends State<Enter> {
     }
 
     db.insertNewTerms(nonEmptyTerms);
-    Provider.of<TermListModel>(context).addAll(nonEmptyTerms);
+    Provider.of<TermListModel>(context, listen: false).addAll(nonEmptyTerms);
     Toast.success("Created Terms!", context);
 
     setState(() {

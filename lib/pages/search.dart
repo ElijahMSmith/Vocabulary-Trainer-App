@@ -40,7 +40,7 @@ class _SearchState extends State<Search> {
 
     if (mounted && success) {
       Toast.success("Successfully Deleted", context);
-      Provider.of<TermListModel>(context).remove(_currentTerm!);
+      Provider.of<TermListModel>(context, listen: false).remove(_currentTerm!);
 
       setState(() {
         _currentTerm = null;

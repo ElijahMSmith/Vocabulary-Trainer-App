@@ -1,16 +1,14 @@
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vocab_trainer_app/misc/db_helper.dart';
 import 'package:vocab_trainer_app/misc/util.dart';
 
-// TODO: Update selector to include a scrollable listing of some of the most common choices or offer to enter manually
-// Keep a list of languages entered manually in SP
+const List<int> DEFAULT_SCHEDULE = [0, 1, 3, 7, 7, 14, 30, 365];
 
+// TODO: Keep a list of languages entered manually in SP
 class SPHelper {
   static final SPHelper _instance = SPHelper._internal();
   SharedPreferences? _prefs;
 
-  List<int> _schedule = defaultSchedule;
+  List<int> _schedule = DEFAULT_SCHEDULE;
   bool _resetAfterMiss = true;
   bool _useDarkTheme = true;
   String _defaultTermLanguage = "English";
@@ -20,24 +18,23 @@ class SPHelper {
     return _instance;
   }
 
-  SPHelper._internal() {
-    // Initialization Logic
-    SharedPreferences.getInstance().then((sp) async {
-      List<String>? retrieved = sp.getStringList("schedule");
-      if (retrieved != null)
-        _schedule = stringListToIntList(retrieved);
-      else
-        _schedule = defaultSchedule;
+  SPHelper._internal();
 
-      _resetAfterMiss = sp.getBool("resetAfterMiss") ?? true;
-      _useDarkTheme = sp.getBool("useDarkTheme") ?? true;
-      _defaultTermLanguage = sp.getString("defaultTermLanguage") ?? "English";
-      _defaultDefinitionLanguage =
-          sp.getString("defaultDefinitionLanguage") ?? "English";
+  Future<void> initialize() async {
+    _prefs = await SharedPreferences.getInstance();
 
-      _prefs = sp;
-      debugPrint("Shared Preferences Data Retrieved!");
-    });
+    List<String>? retrieved = _prefs!.getStringList("schedule");
+    if (retrieved != null)
+      _schedule = stringListToIntList(retrieved);
+    else
+      _schedule = DEFAULT_SCHEDULE;
+
+    _resetAfterMiss = _prefs!.getBool("resetAfterMiss") ?? true;
+    _useDarkTheme = _prefs!.getBool("useDarkTheme") ?? true;
+    _defaultTermLanguage =
+        _prefs!.getString("defaultTermLanguage") ?? "English";
+    _defaultDefinitionLanguage =
+        _prefs!.getString("defaultDefinitionLanguage") ?? "English";
   }
 
   bool get isReady {
@@ -49,8 +46,6 @@ class SPHelper {
   }
 
   Future<bool> updateSchedule(List<int> newSchedule) async {
-    if (!isReady) return false;
-
     bool success = await _prefs!
         .setStringList("schedule", intListToStringList(newSchedule));
     if (success) _schedule = newSchedule;
@@ -63,8 +58,6 @@ class SPHelper {
   }
 
   Future<bool> updateResetAfterMiss(bool newVal) async {
-    if (!isReady) return false;
-
     bool success = await _prefs!.setBool("resetAfterMiss", newVal);
     if (success) _resetAfterMiss = newVal;
 
@@ -76,8 +69,6 @@ class SPHelper {
   }
 
   Future<bool> updateUseDarkTheme(bool newVal) async {
-    if (!isReady) return false;
-
     bool success = await _prefs!.setBool("useDarkTheme", newVal);
     if (success) _useDarkTheme = newVal;
 
@@ -96,8 +87,6 @@ class SPHelper {
     String newTermLanguage,
     String newDefinitionLanguage,
   ) async {
-    if (!isReady) return false;
-
     bool termSuccess =
         await _prefs!.setString("defaultTermLanguage", newTermLanguage);
     if (termSuccess) _defaultTermLanguage = newTermLanguage;
