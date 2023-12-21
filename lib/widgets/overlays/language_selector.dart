@@ -4,8 +4,6 @@ import 'package:vocab_trainer_app/models/language_data.dart';
 
 // ignore: must_be_immutable
 class LanguageSelector extends StatefulWidget {
-  final LanguageCollection allLanguages = LanguageCollection();
-
   final String? currentSelection;
   final void Function(String newLanguage) onLanguageSelect;
   OverlayEntry? _overlayRef;
@@ -39,7 +37,7 @@ class _LanguageSelectorState extends State<LanguageSelector>
   late AnimationController _opacityAnimationController;
   late Animation<double> _opacityAnimation;
 
-  final double TILE_HEIGHT = 50;
+  final double TILE_HEIGHT = 55;
 
   @override
   void initState() {
@@ -64,10 +62,11 @@ class _LanguageSelectorState extends State<LanguageSelector>
 
   // TODO: Add a search bar for filtering languages over scrolling
   // TODO: Group recently used at the top and then ALL below that
-  // TODO: Make all languages one line
 
   @override
   Widget build(BuildContext context) {
+    double LANGUAGE_SELECTOR_HEIGHT = 255;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: FadeTransition(
@@ -96,7 +95,7 @@ class _LanguageSelectorState extends State<LanguageSelector>
                   vertical: 30,
                   horizontal: 30,
                 ),
-                child: Column(
+                child: Column( // TODO: Render overflow when entering the search box
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
@@ -119,7 +118,7 @@ class _LanguageSelectorState extends State<LanguageSelector>
                           color: ThemeColors.secondary,
                         ),
                         Container(
-                          height: 255,
+                          height: LANGUAGE_SELECTOR_HEIGHT,
                           decoration: BoxDecoration(
                             color: ThemeColors.primary,
                             border: Border.all(
@@ -137,39 +136,43 @@ class _LanguageSelectorState extends State<LanguageSelector>
                             ),
                             child: ListView(
                               controller: ScrollController(
-                                  initialScrollOffset: widget
-                                              .currentSelection !=
-                                          null
-                                      ? (widget.allLanguages.indexOfName(
-                                              widget.currentSelection!) *
-                                          TILE_HEIGHT) // TODO: This doesn't work
-                                      : 0),
+                                initialScrollOffset: () {
+                                  if (widget.currentSelection != null) {
+                                    // Stupid code that centers the selected language
+                                    return allLanguages.indexOf(
+                                                widget.currentSelection!) *
+                                            TILE_HEIGHT -
+                                        LANGUAGE_SELECTOR_HEIGHT / 2 +
+                                        TILE_HEIGHT / 2;
+                                  }
+                                  return 0.0;
+                                }(),
+                              ),
                               children: [
-                                ...widget.allLanguages.data
+                                ...allLanguages
                                     .map<Widget>(
-                                      (languageData) => SizedBox(
+                                      (language) => SizedBox(
                                         height: TILE_HEIGHT,
                                         child: Material(
                                           color: widget.currentSelection ==
-                                                  languageData.name
+                                                  language
                                               ? ThemeColors.secondary
                                               : ThemeColors.primary,
                                           child: ListTile(
                                             title: Text(
-                                              languageData.name,
+                                              language,
                                               style: TextStyle(
                                                 fontSize: 24,
                                                 fontWeight: FontWeight.w300,
                                                 color:
                                                     widget.currentSelection ==
-                                                            languageData.name
+                                                            language
                                                         ? ThemeColors.primary
                                                         : ThemeColors.black,
                                               ),
                                             ),
                                             onTap: () {
-                                              widget.onLanguageSelect(
-                                                  languageData.name);
+                                              widget.onLanguageSelect(language);
                                               widget._overlayRef?.remove();
                                             },
                                           ),
@@ -187,6 +190,25 @@ class _LanguageSelectorState extends State<LanguageSelector>
                           color: ThemeColors.secondary,
                         ),
                       ],
+                    ),
+                    SearchBar(
+                      hintText: "Or Search Directly",
+                      textStyle: const MaterialStatePropertyAll(
+                        TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      elevation: const MaterialStatePropertyAll(0),
+                      shape: MaterialStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(
+                            color: ThemeColors.secondary.withOpacity(.4),
+                            width: 1,
+                            style: BorderStyle.solid,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
