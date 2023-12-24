@@ -151,6 +151,9 @@ class _DisplayCardState extends State<DisplayCard> {
             label: "Term",
             language: data?.term.language ?? "Not Selected",
             onChangeLanguage: (newLanguage) {
+              // TODO: This could be better, doesn't update what's in the search bar (may have to be manual)
+              // And doesn't update the options in the search bar (uses old language)
+              // Probably a bigger change is required here - or in the timer?
               if (data != null) {
                 setState(() {
                   data.term.language = newLanguage;

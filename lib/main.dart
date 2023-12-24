@@ -24,14 +24,17 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    return MaterialApp(
-      title: 'Vocabulary Trainer App', // TODO: name change
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: "Jost",
-        fontFamilyFallback: const ["Arial"],
+    return ChangeNotifierProvider(
+      create: (context) => TermListModel(),
+      child: MaterialApp(
+        title: 'Vocabulary Trainer App', // TODO: name change
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          fontFamily: "Jost",
+          fontFamilyFallback: const ["Arial"],
+        ),
+        home: const Framework(),
       ),
-      home: const Framework(),
     );
   }
 }
@@ -120,55 +123,52 @@ class _FrameworkState extends State<Framework> {
   Widget build(BuildContext context) {
     if (loadingState != AppState.READY) return SplashScreen(loadingState);
 
-    return ChangeNotifierProvider(
-      create: (context) => TermListModel(),
-      child: Scaffold(
-        backgroundColor: ThemeColors.accent,
-        body: SizedBox.expand(
-          child: PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() => _pageIndex = index);
-            },
-            children: const [
-              Enter(),
-              Practice(),
-              Search(),
-              Settings(),
-            ],
-          ),
+    return Scaffold(
+      backgroundColor: ThemeColors.accent,
+      body: SizedBox.expand(
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() => _pageIndex = index);
+          },
+          children: const [
+            Enter(),
+            Practice(),
+            Search(),
+            Settings(),
+          ],
         ),
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(20),
-              topLeft: Radius.circular(20),
-            ),
-            boxShadow: [
-              BoxShadow(blurRadius: 5, color: Colors.black.withOpacity(.25))
-            ],
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(20),
+            topLeft: Radius.circular(20),
           ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(20),
-              topLeft: Radius.circular(20),
-            ),
-            child: BottomNavigationBar(
-              items: <BottomNavigationBarItem>[
-                createNavigationBarItem(Icons.add_circle_rounded, "Enter", 0),
-                createNavigationBarItem(
-                    Icons.fitness_center_rounded, "Practice", 1),
-                createNavigationBarItem(Icons.search_rounded, "Search", 2),
-                createNavigationBarItem(Icons.settings_rounded, "Settings", 3),
-              ],
-              type: BottomNavigationBarType.fixed,
-              onTap: _handleTap,
-              currentIndex: _pageIndex,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              selectedItemColor: ThemeColors.secondary,
-              unselectedItemColor: ThemeColors.black.withOpacity(.2),
-            ),
+          boxShadow: [
+            BoxShadow(blurRadius: 5, color: Colors.black.withOpacity(.25))
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(20),
+            topLeft: Radius.circular(20),
+          ),
+          child: BottomNavigationBar(
+            items: <BottomNavigationBarItem>[
+              createNavigationBarItem(Icons.add_circle_rounded, "Enter", 0),
+              createNavigationBarItem(
+                  Icons.fitness_center_rounded, "Practice", 1),
+              createNavigationBarItem(Icons.search_rounded, "Search", 2),
+              createNavigationBarItem(Icons.settings_rounded, "Settings", 3),
+            ],
+            type: BottomNavigationBarType.fixed,
+            onTap: _handleTap,
+            currentIndex: _pageIndex,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            selectedItemColor: ThemeColors.secondary,
+            unselectedItemColor: ThemeColors.black.withOpacity(.2),
           ),
         ),
       ),

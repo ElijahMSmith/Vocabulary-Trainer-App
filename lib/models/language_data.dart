@@ -5,6 +5,7 @@ const allLanguages = [
   "Esperanto",
   "French",
   "German",
+  "Hebrew",
   "Hindu",
   "Italian",
   "Japanese",
@@ -12,8 +13,13 @@ const allLanguages = [
   "Mandarin (Simplified)",
   "Mandarin (Traditional)",
   "Moldovan",
+  "Mongolian",
   "Portuguese",
   "Portuguese (Brazilian)",
   "Russian",
-  "Spanish"
+  "Spanish",
+  "Spanish (Spain)",
+  "Spanish (Mexico)",
+  "Spanish (Castilian)",
+  "Ukrainian",
 ];

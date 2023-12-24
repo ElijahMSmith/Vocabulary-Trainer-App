@@ -49,6 +49,8 @@ class Term {
     id = item["id"] as int;
   }
 
+  Term.fromTermItems(this.term, this.definition);
+
   Map<String, Object> toMap() {
     return {
       "id": id,

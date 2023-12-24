@@ -57,7 +57,7 @@ class TermListModel with ChangeNotifier {
       if (terms[i].id == anUpdatedTerm.id) {
         Term originalTerm = terms[i];
         usageTracker.updateTerm(originalTerm, anUpdatedTerm);
-        
+
         terms[i] = anUpdatedTerm;
         notifyListeners();
         return;
@@ -68,5 +68,9 @@ class TermListModel with ChangeNotifier {
   void resetTermWaits() {
     terms.forEach((term) => term.scheduleIndex = 0);
     notifyListeners();
+  }
+
+  List<String> getNMostRecent(int n) {
+    return usageTracker.getNMostRecent(n);
   }
 }
