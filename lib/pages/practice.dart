@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
 import 'package:vocab_trainer_app/models/term_list.dart';
 import 'package:vocab_trainer_app/models/term.dart';
+import 'package:vocab_trainer_app/pages/review.dart';
 import 'package:vocab_trainer_app/widgets/miscellaneous/app_bar.dart';
 import 'package:vocab_trainer_app/widgets/practice/mode_button.dart';
 import 'package:vocab_trainer_app/widgets/practice/review_bubble.dart';
@@ -19,8 +20,12 @@ class Practice extends StatefulWidget {
 class _PracticeState extends State<Practice> {
   final DBHelper db = DBHelper();
 
-  void _startReviewing() {
+  void _startReviewing(List<Term> toReview) {
     // TODO: Add a new screen on the navigator stack and send reviewTerms, allTerms, and updateTerms there
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Review(toReview)),
+    );
   }
 
   List<Term> getReviewableTerms(List<Term> termList) {
@@ -30,6 +35,8 @@ class _PracticeState extends State<Practice> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    List<Term> reviewableTerms =
+        getReviewableTerms(Provider.of<TermListModel>(context).terms);
     return Consumer<TermListModel>(
       builder: (context, termModel, child) {
         return Scaffold(
@@ -52,8 +59,8 @@ class _PracticeState extends State<Practice> {
                             fontSize: 46, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 25),
                     ReviewBubble(
-                      termCount: getReviewableTerms(termModel.terms).length,
-                      onPress: _startReviewing,
+                      termCount: reviewableTerms.length,
+                      onPress: () => _startReviewing(reviewableTerms),
                     ),
                     const SizedBox(height: 25),
                     const Text(
@@ -64,20 +71,18 @@ class _PracticeState extends State<Practice> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    ModeButton(
+                    const ModeButton(
                       iconData: Icons.info,
                       bkgIconColor: ThemeColors.red,
-                      name: "Free Play",
+                      name: "Free Play (Coming Soon)",
                       tag: "Practice Anything",
-                      onPress: _startReviewing,
                     ),
                     const SizedBox(height: 10),
-                    ModeButton(
+                    const ModeButton(
                       iconData: Icons.fire_extinguisher,
                       bkgIconColor: ThemeColors.blue,
-                      name: "Challenge",
+                      name: "Challenge (Coming Soon)",
                       tag: "Go For Streaks",
-                      onPress: _startReviewing,
                     ),
                     const SizedBox(height: 25),
                   ],

@@ -3,7 +3,6 @@ import 'package:vocab_trainer_app/misc/util.dart';
 
 const List<int> DEFAULT_SCHEDULE = [0, 1, 3, 7, 7, 14, 30, 365];
 
-// TODO: Keep a list of languages entered manually in SP
 class SPHelper {
   static final SPHelper _instance = SPHelper._internal();
   SharedPreferences? _prefs;

@@ -131,9 +131,9 @@ class _SearchBarState extends State<TermSearchBar> {
                           ),
                         ),
                         onTap: () {
-                          _controller.text = term.displayString;
                           _focusNode.unfocus();
                           widget.onSubmit(term);
+                          _controller.text = "";
                         },
                       );
                     }).toList(),

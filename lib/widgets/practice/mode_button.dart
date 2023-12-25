@@ -69,7 +69,7 @@ class ModeButton extends StatelessWidget {
                   Text(
                     name,
                     style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.w500),
+                        fontSize: 18, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 2),
                   Text(
