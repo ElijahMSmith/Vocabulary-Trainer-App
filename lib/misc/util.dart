@@ -11,3 +11,7 @@ List<String> intListToStringList(List<int> list) {
 List<int> stringListToIntList(List<String> list) {
   return list.map((e) => int.parse(e)).toList();
 }
+
+String makePluralIfNeeded(String theThing, int theCount) {
+  return theThing + (theCount > 1 ? "s" : "");
+}

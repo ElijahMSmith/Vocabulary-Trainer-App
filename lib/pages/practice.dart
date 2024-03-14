@@ -20,11 +20,10 @@ class Practice extends StatefulWidget {
 class _PracticeState extends State<Practice> {
   final DBHelper db = DBHelper();
 
-  void _startReviewing(List<Term> toReview) {
-    // TODO: Add a new screen on the navigator stack and send reviewTerms, allTerms, and updateTerms there
+  void startReviewing(List<Term> toReview) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Review(toReview)),
+      MaterialPageRoute<Review>(builder: (context) => Review(toReview)),
     );
   }
 
@@ -51,16 +50,22 @@ class _PracticeState extends State<Practice> {
                     const SizedBox(height: 25),
                     const Text(
                       "What is",
-                      style:
-                          TextStyle(fontSize: 46, fontWeight: FontWeight.w400),
+                      style: TextStyle(
+                        fontSize: 46,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                    const Text("Today's Goal?",
-                        style: TextStyle(
-                            fontSize: 46, fontWeight: FontWeight.w600)),
+                    const Text(
+                      "Today's Goal?",
+                      style: TextStyle(
+                        fontSize: 46,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     const SizedBox(height: 25),
                     ReviewBubble(
                       termCount: reviewableTerms.length,
-                      onPress: () => _startReviewing(reviewableTerms),
+                      onPress: () => startReviewing(reviewableTerms),
                     ),
                     const SizedBox(height: 25),
                     const Text(

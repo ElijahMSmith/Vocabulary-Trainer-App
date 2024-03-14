@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vocab_trainer_app/misc/colors.dart';
+import 'package:vocab_trainer_app/misc/util.dart';
 
 class ReviewBubble extends StatelessWidget {
   final int termCount;
@@ -41,20 +42,26 @@ class ReviewBubble extends StatelessWidget {
         borderRadius: const BorderRadius.all(Radius.circular(30)),
         boxShadow: [
           BoxShadow(
-              blurRadius: 4,
-              offset: const Offset(0, 4),
-              color: Colors.black.withOpacity(.2))
+            blurRadius: 4,
+            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(.2),
+          ),
         ],
       ),
       padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 30),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(termCount > 0 ? "Review $termCount Terms!" : "No Pending Terms!",
-              style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white)),
+          Text(
+            termCount > 0
+                ? "Review $termCount ${makePluralIfNeeded("Term", termCount)}!"
+                : "No Pending Terms!",
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
           const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,18 +76,20 @@ class ReviewBubble extends StatelessWidget {
                     Text(
                       termCount > 0 ? "You got this." : "Nice work.",
                       style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.white,
+                      ),
                     ),
                     termCount > 0
                         ? buildReviewButton()
                         : const Text(
                             "See You Tomorrow!",
                             style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.white),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                            ),
                           ),
                   ],
                 ),
